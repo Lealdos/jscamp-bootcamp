@@ -473,7 +473,6 @@ article a {
 }
 
 @media (max-width: 520px) {
-    /* Header adjustments */
     header {
         gap: 1rem;
         padding: 1rem;
@@ -490,7 +489,6 @@ article a {
         justify-content: center;
     }
 
-    /* Hero section adjustments */
     main > section:nth-child(1) {
         height: 400px;
         padding: 1rem;
@@ -510,7 +508,6 @@ article a {
         width: 100%;
     }
 
-    /* Job listings adjustments */
     .jobs-listings article {
         flex-direction: column;
         padding: 1rem;
@@ -521,7 +518,6 @@ article a {
         margin-top: 1rem;
     }
 
-    /* Pagination adjustments */
     .pagination {
         flex-wrap: wrap;
     }
@@ -531,7 +527,6 @@ article a {
         height: 2rem;
     }
 
-    /* Form adjustments */
     form {
         padding: 0.5rem;
     }
@@ -540,7 +535,6 @@ article a {
         width: 100%;
     }
 
-    /* General text adjustments */
     h1 {
         font-size: 1.25rem;
     }
