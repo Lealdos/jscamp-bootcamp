@@ -1,122 +1,97 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <title>DevJobs - Empleos</title>
-        <meta charset="UTF-8" />
-        <meta
-            name="description"
-            content="Listado con empleos y filtros para encontrar el trabajo de tus sueños."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="./empleos.css" />
-        <script async src="./script.js"></script>
-    </head>
 
-    <body>
-        <header>
-            <h1>
-                <svg
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <polyline points="16 18 22 12 16 6"></polyline>
-                    <polyline points="8 6 2 12 8 18"></polyline>
-                </svg>
-                <a href="index.html"> DevJobs </a>
-            </h1>
+<head>
+    <title>DevJobs - Empleos</title>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Listado con empleos y filtros para encontrar el trabajo de tus sueños." />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./empleos.css" />
+    <script async src="./script.js"></script>
+</head>
 
-            <nav>
-                <a href="./index.html"> Inicio </a>
-                <a href="">Empleos</a>
-            </nav>
+<body>
+    <header>
+        <!-- Un heading no puede tener un anchor dentro de él, la estructura correcta es a > h1 -->
+        <a href="index.html">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <h1> DevJobs </h1>
+        </a>
 
-            <div>
-                <a href="">Publicar un empleo</a>
-            </div>
-        </header>
+        <nav>
+            <a href="./index.html"> Inicio </a>
+            <a href="">Empleos</a>
+        </nav>
 
-        <main>
-            <section class="jobs-search">
-                <h1>Encuentra tu próximo trabajo</h1>
-                <p>Explora miles de oportunidades en el sector tecnológico.</p>
+        <div>
+            <a href="">Publicar un empleo</a>
+        </div>
+    </header>
 
-                <form role="search">
-                    <div class="search-bar">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="icon icon-tabler icons-tabler-outline icon-tabler-search"
-                        >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path
-                                d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"
-                            />
-                            <path d="M21 21l-6 -6" />
-                        </svg>
+    <main>
+        <section class="jobs-search">
+            <h1>Encuentra tu próximo trabajo</h1>
+            <p>Explora miles de oportunidades en el sector tecnológico.</p>
 
-                        <input
-                            required
-                            type="text"
-                            placeholder="Buscar trabajos, empresas o habilidades"
-                        />
-                    </div>
+            <!-- El propósito del formulario es filtrar los empleos, por eso los select tienen que estar dentro también -->
+            <form role="search">
+                <div class="search-bar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-search">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                        <path d="M21 21l-6 -6" />
+                    </svg>
 
-                    <div class="search-filters">
-                        <select
-                            name="technology"
-                            id="filter-technology"
-                            title="Tecnología"
-                        >
-                            <option value="">Tecnología</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="python">Python</option>
-                            <option value="java">Java</option>
-                            <option value="react">React</option>
-                            <option value="nodejs">Node.js</option>
-                        </select>
+                    <!-- 
+                        En este caso required no es requerido.
+                        Si el usuario quiere buscar un empleo a partir del select, no tiene porqué llenar el input de texto.
+                        -->
+                    <input type="text" placeholder="Buscar trabajos, empresas o habilidades" />
+                </div>
+                <div class="search-filters">
+                    <select name="technology" id="filter-technology" title="Tecnología">
+                        <option value="">Tecnología</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="react">React</option>
+                        <option value="nodejs">Node.js</option>
+                    </select>
 
-                        <select name="location" id="location" title="Ubicación">
-                            <option value="">Ubicación</option>
-                            <option value="remoto">Remoto</option>
-                            <option value="Ciudad de México">
-                                Ciudad de México
-                            </option>
-                            <option value="guadalajara">Guadalajara</option>
-                            <option value="monterrey">Monterrey</option>
-                            <option value="barcelona">Barcelona</option>
-                        </select>
+                    <select name="location" id="location" title="Ubicación">
+                        <option value="">Ubicación</option>
+                        <option value="remoto">Remoto</option>
+                        <option value="Ciudad de México">
+                            Ciudad de México
+                        </option>
+                        <option value="guadalajara">Guadalajara</option>
+                        <option value="monterrey">Monterrey</option>
+                        <option value="barcelona">Barcelona</option>
+                    </select>
 
-                        <select
-                            name="experience-level"
-                            id="experience-level"
-                            title="Nivel de experiencia"
-                        >
-                            <option value="">Nivel de experiencia</option>
-                            <option value="junior">Junior</option>
-                            <option value="mid">Mid-level</option>
-                            <option value="senior">Senior</option>
-                            <option value="lead">Lead</option>
-                        </select>
-                    </div>
-                </form>
-            </section>
+                    <select name="experience-level" id="experience-level" title="Nivel de experiencia">
+                        <option value="">Nivel de experiencia</option>
+                        <option value="junior">Junior</option>
+                        <option value="mid">Mid-level</option>
+                        <option value="senior">Senior</option>
+                        <option value="lead">Lead</option>
+                    </select>
+                </div>
+            </form>
+        </section>
 
-            <section id="job-result">
-                <h2 id="leo">Resultados de búsqueda</h2>
+        <section id="job-result">
+            <h2 id="leo">Resultados de búsqueda</h2>
 
-                <div class="jobs-listings">
+            <!-- Los resultados de busqueda son una lista de empleos -->
+            <ul class="jobs-listings">
+                <li>
                     <article class="job-listing-card">
                         <div>
                             <a href="trabajos-id-01.html">
@@ -135,7 +110,8 @@
                             Aplicar
                         </button>
                     </article>
-
+                </li>
+                <li>
                     <article class="job-listing-card">
                         <div>
                             <h3>Analista de Datos</h3>
@@ -149,7 +125,9 @@
                         </div>
                         <button class="button-apply-job">Aplicar</button>
                     </article>
+                </li>
 
+                <li>
                     <article class="job-listing-card">
                         <div>
                             <h3>Desarrollador de Aplicaciones Móviles</h3>
@@ -163,7 +141,8 @@
                         </div>
                         <button class="button-apply-job">Aplicar</button>
                     </article>
-
+                </li>
+                <li>
                     <article class="job-listing-card">
                         <div>
                             <h3>Ingeniero de DevOps</h3>
@@ -178,48 +157,41 @@
                         </div>
                         <button class="button-apply-job">Aplicar</button>
                     </article>
-                </div>
+                </li>
+            </ul>
 
-                <nav class="pagination">
-                    <a href="#"
-                        ><svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M15 6l-6 6l6 6" /></svg
-                    ></a>
-                    <a class="is-active" href="#">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#"
-                        ><svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
-                        >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M9 6l6 6l-6 6" /></svg
-                    ></a>
-                </nav>
-            </section>
-        </main>
-        <footer>
-            <small>&copy; 2025 DevJobs. Todos los derechos reservados.</small>
-        </footer>
-    </body>
+            <nav class="pagination">
+                <!--
+                Si un anchor o un button no tiene texto que indique su propósito, es recomendado agregar estos atributos:
+                aria-label, que indica el propósito del enlace o botón a los lectores de pantalla con el valor que le ponemos
+                title, que muestra su valor en un tooltip al hacer hover en el elemento
+                  -->
+                <a href="#" aria-label="Ir a la página de resultados anterior"
+                    title="Ir a la página de resultados anterior"><svg width="16" height="16" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M15 6l-6 6l6 6" />
+                    </svg></a>
+                <a class="is-active" href="#" aria-label="Ir a la página de resultados actual"
+                    title="Ir a la página de resultados actual">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <a href="#" aria-label="Ir a la página de resultados siguiente"
+                    title="Ir a la página de resultados siguiente"><svg width="16" height="16" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 6l6 6l-6 6" />
+                    </svg></a>
+            </nav>
+        </section>
+    </main>
+    <footer>
+        <small>&copy; 2025 DevJobs. Todos los derechos reservados.</small>
+    </footer>
+</body>
+
 </html>
