@@ -137,6 +137,7 @@ nav {
       outline: none;
     }
   }
+
 }
 
 /* Botones del Header */
@@ -433,6 +434,12 @@ article {
     p {
       margin-top: 0.5rem;
     }
+
+    a {
+      color: var(--text-primary);
+
+    }
+
   }
 
   li:last-child .job-listing-card {
