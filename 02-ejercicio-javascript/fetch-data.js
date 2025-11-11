@@ -14,7 +14,7 @@ const article = FetchData.then(response => response.json()).then((jobs) => {
         const jobListingCard = document.createElement('li')
 
         jobListingCard.className = 'job-listing-card'
-        jobListingCard.dataset.modalidad = job.ubicacion
+        jobListingCard.dataset.modalidad = job.data.modalidad
         jobListingCard.dataset.nivel = job.data.nivel
         jobListingCard.dataset.technology = job.data.technology
         jobListingCard.innerHTML = `
