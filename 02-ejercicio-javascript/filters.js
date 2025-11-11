@@ -15,10 +15,8 @@ form.addEventListener('change', function (event) {
   event.preventDefault()
   const formData = new FormData(event.currentTarget);
   const formValues = Object.fromEntries(formData.entries());
-  console.log(formValues)
   const { technology, location, 'experience-level': experienceLevel,search } = formValues
   const jobsListingCards = document.querySelectorAll('.job-listing-card')
-  console.log('tech: ',technology,'ubicacion: ', location,'experience: ', experienceLevel, search)
 
   if (experienceLevel ==='Ciudad de México'){
     location = 'cdmx'
