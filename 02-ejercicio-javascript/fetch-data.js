@@ -11,22 +11,22 @@ const FetchData = fetch('./data.json')
 const article = FetchData.then(response => response.json()).then((jobs) => {
     jobs.forEach(job => {
 
-        const jobListingCard = document.createElement('article')
+        const jobListingCard = document.createElement('li')
 
         jobListingCard.className = 'job-listing-card'
-        jobListingCard.dataset.modalidad = job.data.modalidad
+        jobListingCard.dataset.modalidad = job.ubicacion
         jobListingCard.dataset.nivel = job.data.nivel
         jobListingCard.dataset.technology = job.data.technology
-        jobListingCard.innerHTML = `<article class="job-listing-card">
-          <div>
+        jobListingCard.innerHTML = `
+          <article>
             <a href="trabajos-id-${job.id}.html"> 
             <h3>${job.titulo}</h3>
               <small>${job.empresa} | ${job.ubicacion}.</small>
             </a>
               <p>${job.descripcion}</p>
-              </div>
+              </article>
               <button class="button-apply-job" id="boton-importante">Aplicar</button>
-        </article>`
+        `
         jobsListingSection.appendChild(jobListingCard)
     })
 })

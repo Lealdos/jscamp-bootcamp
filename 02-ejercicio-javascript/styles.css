@@ -335,7 +335,7 @@ footer {
   }
 }
 
-article {
+li {
   background-color: var(--card-bg);
   padding: 2rem;
   margin-bottom: 16px;
@@ -357,6 +357,9 @@ article {
 
   h3 {
     font-weight: 500;
+  }
+  button{
+    margin: auto auto;
   }
 }
 
