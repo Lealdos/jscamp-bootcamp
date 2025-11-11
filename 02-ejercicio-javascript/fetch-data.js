@@ -25,7 +25,7 @@ const article = FetchData.then(response => response.json()).then((jobs) => {
             </a>
               <p>${job.descripcion}</p>
               </article>
-              <button class="button-apply-job" id="boton-importante">Aplicar</button>
+              <button class="button-apply-job" >Aplicar</button>
         `
         jobsListingSection.appendChild(jobListingCard)
     })
