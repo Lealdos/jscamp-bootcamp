@@ -1,16 +1,18 @@
 /* Aquí va la lógica para mostrar los resultados de búsqueda */
-
-
-
 const jobsListingSection = document.querySelector('.jobs-listings')
 
+/* No hace falta guardar el fetch en una variable, si no retornamos ningún valor para luego usar */
+fetch('./data.json').then(response => response.json()).then((jobs) => {
+      /* 
+    Creamos un DocumentFragment para mejorar el rendimiento.
+    En lugar de agregar cada trabajo directamente al DOM (lo que haría que el navegador redibuje la página múltiples veces), guardamos todos los elementos en memoria primero. Al final, agregamos todo de una sola vez.
+    
+    Es como preparar todos los platos en la cocina antes de llevarlos a la mesa, en vez de hacer un viaje por cada plato, llevamos todos juntos, y es mejor :)
 
-
-const FetchData = fetch('./data.json')
-
-const article = FetchData.then(response => response.json()).then((jobs) => {
+    Esto viene muy bien cuando tenemos muchos elementos que agregar al DOM.
+    */
+    const fragment = document.createDocumentFragment()
     jobs.forEach(job => {
-
         const jobListingCard = document.createElement('li')
 
         jobListingCard.className = 'job-listing-card'
@@ -27,8 +29,8 @@ const article = FetchData.then(response => response.json()).then((jobs) => {
               </article>
               <button class="button-apply-job" >Aplicar</button>
         `
-        jobsListingSection.appendChild(jobListingCard)
+        fragment.appendChild(jobListingCard)
     })
+    jobsListingSection.appendChild(fragment)
 })
-
 
