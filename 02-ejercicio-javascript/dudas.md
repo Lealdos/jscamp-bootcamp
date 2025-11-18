@@ -27,3 +27,4 @@ Pero no será `true` solo porque `java` esté incluido, sino que también será 
 Por esa razón, hacer el `split(',')` y separar las tecnologías en una lista es lo mejor, porque nos permite hacer el `includes()` sobre una lista de tecnologías y no sobre una cadena de texto que no es precisa.
 
 Agregamos la corrección en el archivo `filters.js` para que quede claro, excelente observación! Te felicito :)
+en la correccion vi que fue removido, en los caso cuando son multiples tecnologias el filtro igual funcionara en esos casos?
