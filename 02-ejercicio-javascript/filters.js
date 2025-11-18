@@ -34,7 +34,7 @@ form.addEventListener('change', function (event) {
     const experienceLevelValue = article?.dataset.nivel;
 
     /* verificamos si el valor es vacio o si coincide con el valor del dataset */
-    const hasFoundTechnology = technology === '' || technologyValue.toLocaleLowerCase().includes(technology)
+    const hasFoundTechnology = technology === '' || technologyValue.toLocaleLowerCase().split(',').includes(technology.toLocaleLowerCase())
     const hasFoundLocation = location === '' || locationValue.toLocaleLowerCase().includes(location)
     const hasFoundExperienceLevel = experienceLevel === '' || experienceLevelValue === experienceLevel
 
