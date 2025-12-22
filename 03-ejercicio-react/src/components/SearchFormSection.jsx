@@ -1,4 +1,11 @@
+import { useId } from 'react';
+
 export function SearchFormSection() {
+    const searchInputId = useId();
+    const technologyFilterId = useId();
+    const locationFilterId = useId();
+    const experienceLevelFilterId = useId();
+
     return (
         <section className='jobs-search'>
             <h1>Encuentra tu próximo trabajo</h1>
@@ -23,15 +30,15 @@ export function SearchFormSection() {
                     </svg>
 
                     <input
-                        id='empleos-search-input'
+                        id={searchInputId}
                         type='text'
-                        name='search-value'
+                        name={searchInputId}
                         placeholder='Buscar trabajos, empresas o habilidades'
                     />
                 </div>
 
                 <div className='search-filters'>
-                    <select name='technology-value' id='filter-technology'>
+                    <select name={technologyFilterId} id={technologyFilterId}>
                         <option value=''>Tecnología</option>
                         <optgroup label='Tecnologías populares'>
                             <option value='javascript'>JavaScript</option>
@@ -49,7 +56,7 @@ export function SearchFormSection() {
                         <option value='php'>PHP</option>
                     </select>
 
-                    <select name='location-value' id='filter-location'>
+                    <select name={locationFilterId} id={locationFilterId}>
                         <option value=''>Ubicación</option>
                         <option value='remoto'>Remoto</option>
                         <option value='cdmx'>Ciudad de México</option>
@@ -59,8 +66,8 @@ export function SearchFormSection() {
                     </select>
 
                     <select
-                        name='experience-level-value'
-                        id='filter-experience-level'
+                        name={experienceLevelFilterId}
+                        id={experienceLevelFilterId}
                     >
                         <option value=''>Nivel de experiencia</option>
                         <option value='junior'>Junior</option>
