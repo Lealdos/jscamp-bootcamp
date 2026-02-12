@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { JobListings } from './JobListings';
 import { Pagination } from './Pagination';
 
@@ -6,8 +7,20 @@ export function SearchResultsSection({ jobs, currentPage, onPageChange }) {
     const jobsPerPage = 5;
     const totalPages = Math.ceil(jobs.length / jobsPerPage);
 
+    const safeCurrentPage =
+        totalPages > 0
+            ? Math.min(Math.max(currentPage, 1), totalPages)
+            : currentPage;
+
+    useEffect(() => {
+        if (totalPages === 0) return;
+        if (safeCurrentPage !== currentPage) {
+            onPageChange(safeCurrentPage);
+        }
+    }, [currentPage, onPageChange, safeCurrentPage, totalPages]);
+
     // Obtener los empleos de la página actual
-    const indexOfLastJob = currentPage * jobsPerPage;
+    const indexOfLastJob = safeCurrentPage * jobsPerPage;
     const indexOfFirstJob = indexOfLastJob - jobsPerPage;
     const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
 
@@ -20,7 +33,7 @@ export function SearchResultsSection({ jobs, currentPage, onPageChange }) {
             {totalPages > 0 && (
                 <Pagination
                     totalPages={totalPages}
-                    currentPage={currentPage}
+                    currentPage={safeCurrentPage}
                     onPageChange={onPageChange}
                 />
             )}
