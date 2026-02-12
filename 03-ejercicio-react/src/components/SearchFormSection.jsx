@@ -109,7 +109,6 @@ export function SearchFormSection({
                     >
                         <option value=''>Nivel de experiencia</option>
                         <option value='junior'>Junior</option>
-                        <option value='mid'>Mid-level</option>
                         <option value='mid-level'>Mid-level</option>
                         <option value='senior'>Senior</option>
                     </select>
