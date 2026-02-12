@@ -1,10 +1,35 @@
 import { useId } from 'react';
 
-export function SearchFormSection() {
+export function SearchFormSection({
+    searchValue = '',
+    onSearchChange,
+    technologyValue = '',
+    onTechnologyChange,
+    locationValue = '',
+    onLocationChange,
+    levelValue = '',
+    onLevelChange,
+}) {
     const searchInputId = useId();
     const technologyFilterId = useId();
     const locationFilterId = useId();
     const experienceLevelFilterId = useId();
+
+    const handleSearchInput = (e) => {
+        onSearchChange(e.target.value);
+    };
+
+    const handleTechnologySelect = (e) => {
+        onTechnologyChange(e.target.value);
+    };
+
+    const handleLocationSelect = (e) => {
+        onLocationChange(e.target.value);
+    };
+
+    const handleLevelSelect = (e) => {
+        onLevelChange(e.target.value);
+    };
 
     return (
         <section className='jobs-search'>
@@ -34,46 +59,59 @@ export function SearchFormSection() {
                         type='text'
                         name={searchInputId}
                         placeholder='Buscar trabajos, empresas o habilidades'
+                        value={searchValue}
+                        onChange={handleSearchInput}
                     />
                 </div>
 
                 <div className='search-filters'>
-                    <select name={technologyFilterId} id={technologyFilterId}>
+                    <select
+                        name={technologyFilterId}
+                        id={technologyFilterId}
+                        value={technologyValue}
+                        onChange={handleTechnologySelect}
+                    >
                         <option value=''>Tecnología</option>
                         <optgroup label='Tecnologías populares'>
                             <option value='javascript'>JavaScript</option>
                             <option value='python'>Python</option>
                             <option value='react'>React</option>
-                            <option value='nodejs'>Node.js</option>
+                            <option value='node'>Node.js</option>
                         </optgroup>
-                        <option value='java'>Java</option>
-                        <hr />
-                        <option value='csharp'>C#</option>
-                        <option value='c'>C</option>
-                        <option value='c++'>C++</option>
-                        <hr />
-                        <option value='ruby'>Ruby</option>
-                        <option value='php'>PHP</option>
+                        <option value='mobile'>Mobile</option>
                     </select>
 
-                    <select name={locationFilterId} id={locationFilterId}>
+                    <select
+                        name={locationFilterId}
+                        id={locationFilterId}
+                        value={locationValue}
+                        onChange={handleLocationSelect}
+                    >
                         <option value=''>Ubicación</option>
                         <option value='remoto'>Remoto</option>
                         <option value='cdmx'>Ciudad de México</option>
                         <option value='guadalajara'>Guadalajara</option>
                         <option value='monterrey'>Monterrey</option>
                         <option value='barcelona'>Barcelona</option>
+                        <option value='madrid'>Madrid</option>
+                        <option value='valencia'>Valencia</option>
+                        <option value='bogota'>Bogotá</option>
+                        <option value='bsas'>Buenos Aires</option>
+                        <option value='lima'>Lima</option>
+                        <option value='santiago'>Santiago de Chile</option>
                     </select>
 
                     <select
                         name={experienceLevelFilterId}
                         id={experienceLevelFilterId}
+                        value={levelValue}
+                        onChange={handleLevelSelect}
                     >
                         <option value=''>Nivel de experiencia</option>
                         <option value='junior'>Junior</option>
                         <option value='mid'>Mid-level</option>
+                        <option value='mid-level'>Mid-level</option>
                         <option value='senior'>Senior</option>
-                        <option value='lead'>Lead</option>
                     </select>
                 </div>
             </form>
