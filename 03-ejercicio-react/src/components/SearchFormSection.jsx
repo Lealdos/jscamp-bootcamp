@@ -16,18 +16,25 @@ export function SearchFormSection({
     const experienceLevelFilterId = useId();
 
     const handleSearchInput = (e) => {
+        e.preventDefault();
         onSearchChange(e.target.value);
     };
 
     const handleTechnologySelect = (e) => {
+        e.preventDefault();
+
         onTechnologyChange(e.target.value);
     };
 
     const handleLocationSelect = (e) => {
+        e.preventDefault();
+
         onLocationChange(e.target.value);
     };
 
     const handleLevelSelect = (e) => {
+        e.preventDefault();
+
         onLevelChange(e.target.value);
     };
 
@@ -36,7 +43,11 @@ export function SearchFormSection({
             <h1>Encuentra tu próximo trabajo</h1>
             <p>Explora miles de oportunidades en el sector tecnológico.</p>
 
-            <form id='empleos-search-form' role='search'>
+            <form
+                id='empleos-search-form'
+                role='search'
+                onSubmit={(e) => e.preventDefault()}
+            >
                 <div className='search-bar'>
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
