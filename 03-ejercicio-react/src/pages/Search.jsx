@@ -7,16 +7,26 @@ import { useDebounce } from '../hooks/useDebounce';
 import { API_URL, JOBS_PER_PAGE } from '../const';
 
 export function SearchPage() {
-    const [searchInput, setSearchInput] = useState('');
-    const [technology, setTechnology] = useState('');
-    const [location, setLocation] = useState('');
-    const [level, setLevel] = useState('');
+    const [filters, setFilters] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            technology: params.get('technology') || '',
+            location: params.get('type') || '',
+            experienceLevel: params.get('level') || '',
+        };
+    });
+
+    const [textToFilter, setTextToFilter] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('text') || '';
+    });
+
     const [currentPage, setCurrentPage] = useState(1);
     const [jobs, setJobs] = useState([]);
     const [totalJobs, setTotalJobs] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const debouncedSearchInput = useDebounce(searchInput, 500);
+    const debouncedTextToFilter = useDebounce(textToFilter, 500);
 
     // Fetch de empleos desde la API
     useEffect(() => {
@@ -27,11 +37,13 @@ export function SearchPage() {
                 params.set('limit', JOBS_PER_PAGE);
                 params.set('offset', (currentPage - 1) * JOBS_PER_PAGE);
 
-                if (debouncedSearchInput)
-                    params.set('text', debouncedSearchInput);
-                if (technology) params.set('technology', technology);
-                if (location) params.set('type', location);
-                if (level) params.set('level', level);
+                if (debouncedTextToFilter)
+                    params.set('text', debouncedTextToFilter);
+                if (filters.technology)
+                    params.set('technology', filters.technology);
+                if (filters.location) params.set('type', filters.location);
+                if (filters.experienceLevel)
+                    params.set('level', filters.experienceLevel);
 
                 const response = await fetch(`${API_URL}?${params.toString()}`);
                 const fetchedData = await response.json();
@@ -56,36 +68,50 @@ export function SearchPage() {
         };
 
         fetchJobs();
-    }, [debouncedSearchInput, technology, location, level, currentPage]);
+    }, [
+        debouncedTextToFilter,
+        filters.technology,
+        filters.location,
+        filters.experienceLevel,
+        currentPage,
+    ]);
 
     // Sincronizar con la URL
     useEffect(() => {
         const params = new URLSearchParams();
-        if (debouncedSearchInput) params.set('text', debouncedSearchInput);
-        if (technology) params.set('technology', technology);
-        if (location) params.set('type', location);
-        if (level) params.set('level', level);
+        if (debouncedTextToFilter) params.set('text', debouncedTextToFilter);
+        if (filters.technology) params.set('technology', filters.technology);
+        if (filters.location) params.set('type', filters.location);
+        if (filters.experienceLevel)
+            params.set('level', filters.experienceLevel);
         if (currentPage > 1) params.set('page', currentPage);
 
         const newUrl = params.toString()
             ? `${window.location.pathname}?${params.toString()}`
             : window.location.pathname;
         window.history.replaceState({}, '', newUrl);
-    }, [debouncedSearchInput, technology, location, level, currentPage]);
+    }, [
+        debouncedTextToFilter,
+        filters.technology,
+        filters.location,
+        filters.experienceLevel,
+        currentPage,
+    ]);
 
     // Leer parámetros iniciales de la URL
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        setSearchInput(params.get('text') || '');
-        setTechnology(params.get('technology') || '');
-        setLocation(params.get('type') || '');
-        setLevel(params.get('level') || '');
         setCurrentPage(parseInt(params.get('page') || '1', 10));
     }, []);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [debouncedSearchInput, technology, location, level]);
+    }, [
+        debouncedTextToFilter,
+        filters.technology,
+        filters.location,
+        filters.experienceLevel,
+    ]);
 
     // Actualizar título de la página
     useEffect(() => {
@@ -95,19 +121,19 @@ export function SearchPage() {
     }, [totalJobs, currentPage]);
 
     const handleSearchChange = (value) => {
-        setSearchInput(value);
+        setTextToFilter(value);
     };
 
     const handleTechnologyChange = (value) => {
-        setTechnology(value);
+        setFilters((prev) => ({ ...prev, technology: value }));
     };
 
     const handleLocationChange = (value) => {
-        setLocation(value);
+        setFilters((prev) => ({ ...prev, location: value }));
     };
 
     const handleLevelChange = (value) => {
-        setLevel(value);
+        setFilters((prev) => ({ ...prev, experienceLevel: value }));
     };
 
     const handlePageChange = (page) => {
@@ -120,13 +146,13 @@ export function SearchPage() {
         <>
             <main>
                 <SearchFormSection
-                    searchValue={searchInput}
+                    searchValue={textToFilter}
                     onSearchChange={handleSearchChange}
-                    technologyValue={technology}
+                    technologyValue={filters.technology}
                     onTechnologyChange={handleTechnologyChange}
-                    locationValue={location}
+                    locationValue={filters.location}
                     onLocationChange={handleLocationChange}
-                    levelValue={level}
+                    levelValue={filters.experienceLevel}
                     onLevelChange={handleLevelChange}
                 />
                 <SearchResultsSection
