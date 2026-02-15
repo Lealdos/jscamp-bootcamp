@@ -30,4 +30,4 @@
 
 ## Ejercicio extra
 
-<!-- Dudas del ejercicio extra -->
+Por lo momentos no se me ocurrio ninguna duda. quizas son las correcciones eso cambie quedo a la espera gracias.
