@@ -1,10 +1,8 @@
 /* Pasa tu contenido de src/App.jsx aquí */
 import { useState, useEffect } from 'react';
-import { Header } from '../components/Header';
 
 import { SearchFormSection } from '../components/SearchFormSection';
 import { SearchResultsSection } from '../components/SearchResultsSection';
-import { Footer } from '../components/Footer';
 import { useDebounce } from '../hooks/useDebounce';
 import { useFilters } from '../hooks/useFilters';
 import jobs from '../data.json';
