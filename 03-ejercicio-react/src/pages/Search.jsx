@@ -21,7 +21,21 @@ export function SearchPage() {
         return params.get('text') || '';
     });
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        const pageParam = params.get('page');
+
+        if (!pageParam) return 1;
+
+        const page = Number(pageParam);
+
+        if (Number.isNaN(page) || page < 1) {
+            return 1;
+        }
+        console.log('Página inicial desde URL:', page);
+        return page;
+    });
+
     const [jobs, setJobs] = useState([]);
     const [totalJobs, setTotalJobs] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -47,8 +61,6 @@ export function SearchPage() {
 
                 const response = await fetch(`${API_URL}?${params.toString()}`);
                 const fetchedData = await response.json();
-
-                console.log('API Response:', fetchedData);
 
                 // La API puede devolver { results: [], total: 0 } o directamente un array
                 if (Array.isArray(await fetchedData.data)) {
@@ -86,6 +98,8 @@ export function SearchPage() {
             params.set('level', filters.experienceLevel);
         if (currentPage > 1) params.set('page', currentPage);
 
+        console.log('Actualizando URL con parámetros:', params.toString());
+
         const newUrl = params.toString()
             ? `${window.location.pathname}?${params.toString()}`
             : window.location.pathname;
@@ -101,17 +115,17 @@ export function SearchPage() {
     // Leer parámetros iniciales de la URL
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        setCurrentPage(parseInt(params.get('page') || '1', 10));
-    }, []);
+        setCurrentPage(parseInt(params.get('page') || currentPage, 10));
+    }, [currentPage]);
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [
-        debouncedTextToFilter,
-        filters.technology,
-        filters.location,
-        filters.experienceLevel,
-    ]);
+    // useEffect(() => {
+    //     setCurrentPage(1);
+    // }, [
+    //     debouncedTextToFilter,
+    //     filters.technology,
+    //     filters.location,
+    //     filters.experienceLevel,
+    // ]);
 
     // Actualizar título de la página
     useEffect(() => {
@@ -122,18 +136,22 @@ export function SearchPage() {
 
     const handleSearchChange = (value) => {
         setTextToFilter(value);
+        setCurrentPage(1);
     };
 
     const handleTechnologyChange = (value) => {
         setFilters((prev) => ({ ...prev, technology: value }));
+        setCurrentPage(1);
     };
 
     const handleLocationChange = (value) => {
         setFilters((prev) => ({ ...prev, location: value }));
+        setCurrentPage(1);
     };
 
     const handleLevelChange = (value) => {
         setFilters((prev) => ({ ...prev, experienceLevel: value }));
+        setCurrentPage(1);
     };
 
     const handlePageChange = (page) => {
