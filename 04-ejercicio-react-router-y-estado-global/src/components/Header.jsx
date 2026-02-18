@@ -1,6 +1,19 @@
+import { NavLink } from 'react-router';
 import { Link } from './Link';
+import { useAuthStore } from '../store/authStore';
 
 export function Header() {
+    const { isLoggedIn, login, logout } = useAuthStore();
+
+    const handleAuthClick = () => {
+        if (isLoggedIn) {
+            logout();
+            return;
+        }
+
+        login();
+    };
+
     return (
         <header>
             <Link href='/' style={{ textDecoration: 'none' }}>
@@ -22,8 +35,19 @@ export function Header() {
             </Link>
 
             <nav>
-                <Link href='/search'>Empleos</Link>
+                <NavLink
+                    to='/search'
+                    className={({ isActive }) =>
+                        isActive ? 'nav-link nav-link-active' : 'nav-link'
+                    }
+                >
+                    Empleos
+                </NavLink>
             </nav>
+
+            <button type='button' onClick={handleAuthClick}>
+                {isLoggedIn ? 'Cerrar sesion' : 'Iniciar sesion'}
+            </button>
         </header>
     );
 }

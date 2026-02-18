@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Link } from '/Users/j3leo/Documents/Devproyect/jscamp-bootcamp/04-ejercicio-react-router-y-estado-global/src/components/Link';
+import { Link } from './Link.jsx';
+import { useFavoritesStore } from '../store/favoritesStore.js';
 
 export function JobCard({ job }) {
-    console.log('Rendering JobCard for job:', job);
     const [isApplied, setIsApplied] = useState(false);
+    const { toggleFavorite, isFavorite } = useFavoritesStore();
+    const isJobFavorite = isFavorite(job.id);
 
     const handleApplyClick = () => {
         setIsApplied(true);
@@ -13,6 +15,9 @@ export function JobCard({ job }) {
         ? 'button-apply-job is-applied'
         : 'button-apply-job';
     const buttonText = isApplied ? 'Aplicado' : 'Aplicar';
+    const favoriteButtonClasses = isJobFavorite
+        ? 'button-favorite is-favorite'
+        : 'button-favorite';
 
     return (
         <article
@@ -30,9 +35,18 @@ export function JobCard({ job }) {
                 </small>
                 <p>{job.descripcion}</p>
             </div>
-            <button className={buttonClasses} onClick={handleApplyClick}>
-                {buttonText}
-            </button>
+            <div className='job-card-actions'>
+                <button
+                    className={favoriteButtonClasses}
+                    type='button'
+                    onClick={() => toggleFavorite(job.id)}
+                >
+                    {isJobFavorite ? 'En favoritos' : 'Agregar a favoritos'}
+                </button>
+                <button className={buttonClasses} onClick={handleApplyClick}>
+                    {buttonText}
+                </button>
+            </div>
         </article>
     );
 }
