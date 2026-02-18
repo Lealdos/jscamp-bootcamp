@@ -1,32 +1,38 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { Link } from '/Users/j3leo/Documents/Devproyect/jscamp-bootcamp/04-ejercicio-react-router-y-estado-global/src/components/Link';
 
 export function JobCard({ job }) {
-  const [isApplied, setIsApplied] = useState(false)
+    console.log('Rendering JobCard for job:', job);
+    const [isApplied, setIsApplied] = useState(false);
 
-  const handleApplyClick = () => {
-    setIsApplied(true)
-  }
+    const handleApplyClick = () => {
+        setIsApplied(true);
+    };
 
-  const buttonClasses = isApplied ? 'button-apply-job is-applied' : 'button-apply-job'
-  const buttonText = isApplied ? 'Aplicado' : 'Aplicar'
+    const buttonClasses = isApplied
+        ? 'button-apply-job is-applied'
+        : 'button-apply-job';
+    const buttonText = isApplied ? 'Aplicado' : 'Aplicar';
 
-  return (
-    <article
-      className="job-listing-card"
-      data-modalidad={job.data.modalidad}
-      data-nivel={job.data.nivel}
-      data-technology={job.data.technology}
-    >
-      <div>
-        <h3>{job.titulo}</h3>
-        <small>
-          {job.empresa} | {job.ubicacion}
-        </small>
-        <p>{job.descripcion}</p>
-      </div>
-      <button className={buttonClasses} onClick={handleApplyClick}>
-        {buttonText}
-      </button>
-    </article>
-  )
+    return (
+        <article
+            className='job-listing-card'
+            data-modalidad={job.data.modalidad}
+            data-nivel={job.data.nivel}
+            data-technology={job.data.technology}
+        >
+            <div>
+                <Link href={`/job/${job.id}`}>
+                    <h3>{job.titulo}</h3>
+                </Link>
+                <small>
+                    {job.empresa} | {job.ubicacion}
+                </small>
+                <p>{job.descripcion}</p>
+            </div>
+            <button className={buttonClasses} onClick={handleApplyClick}>
+                {buttonText}
+            </button>
+        </article>
+    );
 }

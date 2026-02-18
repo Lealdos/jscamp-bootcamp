@@ -17,6 +17,7 @@ function App() {
                 <Route path='/' element={<HomePage />} />
                 <Route path='/search' element={<SearchPage />} />
                 <Route path='*' element={<NotFoundPage />} />
+                <Route path='/job/:id' element={<DetailsPage />} />
             </Routes>
             <Footer />
         </>
