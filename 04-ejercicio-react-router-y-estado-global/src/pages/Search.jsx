@@ -33,7 +33,6 @@ const useFilters = () => {
         if (Number.isNaN(page) || page < 1) {
             return 1;
         }
-        console.log('Página inicial desde URL:', page);
         return page;
     });
 
@@ -91,7 +90,6 @@ const useFilters = () => {
 
             if (currentPage > 1) params.set('page', currentPage);
 
-            console.log('Updating URL with params:', params.get('page'));
             return params;
         });
     }, [filters, currentPage, textToFilter, setSearchParams]);
