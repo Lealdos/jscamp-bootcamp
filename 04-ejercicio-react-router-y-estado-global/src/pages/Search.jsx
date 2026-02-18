@@ -24,8 +24,17 @@ const useFilters = () => {
     );
 
     const [currentPage, setCurrentPage] = useState(() => {
-        const page = Number(searchParams.get('page'));
-        return Number.isNaN(page) ? page : 1;
+        const pageParam = searchParams.get('page');
+
+        if (!pageParam) return 1;
+
+        const page = Number(pageParam);
+
+        if (Number.isNaN(page) || page < 1) {
+            return 1;
+        }
+        console.log('Página inicial desde URL:', page);
+        return page;
     });
 
     const [jobs, setJobs] = useState([]);
@@ -82,6 +91,7 @@ const useFilters = () => {
 
             if (currentPage > 1) params.set('page', currentPage);
 
+            console.log('Updating URL with params:', params.get('page'));
             return params;
         });
     }, [filters, currentPage, textToFilter, setSearchParams]);
