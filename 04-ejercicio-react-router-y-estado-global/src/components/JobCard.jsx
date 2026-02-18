@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Link } from './Link.jsx';
 import { useFavoritesStore } from '../store/favoritesStore.js';
+import { useAuthStore } from '../store/authStore.js';
 
 export function JobCard({ job }) {
+    const { isLoggedIn } = useAuthStore();
+
     const [isApplied, setIsApplied] = useState(false);
     const { toggleFavorite, isFavorite } = useFavoritesStore();
     const isJobFavorite = isFavorite(job.id);
@@ -43,7 +46,11 @@ export function JobCard({ job }) {
                 >
                     {isJobFavorite ? 'En favoritos' : 'Agregar a favoritos'}
                 </button>
-                <button className={buttonClasses} onClick={handleApplyClick}>
+                <button
+                    className={buttonClasses}
+                    disabled={isApplied || !isLoggedIn}
+                    onClick={handleApplyClick}
+                >
                     {buttonText}
                 </button>
             </div>
