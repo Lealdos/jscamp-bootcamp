@@ -112,7 +112,8 @@ nav {
   gap: 1rem;
   display: flex;
 
-  a {
+  a,
+  .nav-link {
     text-decoration: none;
     color: var(--text-secondary);
     transition: color 0.2s;
@@ -124,6 +125,12 @@ nav {
       outline: none;
     }
   }
+}
+
+.nav-link-active {
+  color: var(--primary-light);
+  text-decoration: underline;
+  text-underline-offset: 0.35rem;
 }
 
 /* Botones del Header */
@@ -421,6 +428,12 @@ article {
   }
 }
 
+.job-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .button-apply-job {
   background: #09f;
 
@@ -428,4 +441,12 @@ article {
     background: #4caf50;
     pointer-events: none;
   }
+}
+
+.button-favorite {
+  background: #334155;
+}
+
+.button-favorite.is-favorite {
+  background: #f59e0b;
 }
