@@ -161,26 +161,24 @@ export function SearchPage() {
     const totalPages = Math.ceil(totalJobs / JOBS_PER_PAGE);
 
     return (
-        <>
-            <main>
-                <SearchFormSection
-                    searchValue={textToFilter}
-                    onSearchChange={handleSearchChange}
-                    technologyValue={filters.technology}
-                    onTechnologyChange={handleTechnologyChange}
-                    locationValue={filters.location}
-                    onLocationChange={handleLocationChange}
-                    levelValue={filters.experienceLevel}
-                    onLevelChange={handleLevelChange}
-                />
-                <SearchResultsSection
-                    jobs={jobs}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                    totalPages={totalPages}
-                    loading={loading}
-                />
-            </main>
-        </>
+        <main>
+            <SearchFormSection
+                searchValue={textToFilter}
+                onSearchChange={handleSearchChange}
+                technologyValue={filters.technology}
+                onTechnologyChange={handleTechnologyChange}
+                locationValue={filters.location}
+                onLocationChange={handleLocationChange}
+                levelValue={filters.experienceLevel}
+                onLevelChange={handleLevelChange}
+            />
+            <SearchResultsSection
+                jobs={jobs}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+                totalPages={totalPages}
+                loading={loading}
+            />
+        </main>
     );
 }
