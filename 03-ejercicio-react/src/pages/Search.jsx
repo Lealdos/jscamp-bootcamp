@@ -7,34 +7,10 @@ import { useDebounce } from '../hooks/useDebounce';
 import { API_URL, JOBS_PER_PAGE } from '../const';
 
 export function SearchPage() {
-    const [filters, setFilters] = useState(() => {
-        const params = new URLSearchParams(window.location.search);
-        return {
-            technology: params.get('technology') || '',
-            location: params.get('type') || '',
-            experienceLevel: params.get('level') || '',
-        };
-    });
-
-    const [textToFilter, setTextToFilter] = useState(() => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('text') || '';
-    });
-
-    const [currentPage, setCurrentPage] = useState(() => {
-        const params = new URLSearchParams(window.location.search);
-        const pageParam = params.get('page');
-
-        if (!pageParam) return 1;
-
-        const page = Number(pageParam);
-
-        if (Number.isNaN(page) || page < 1) {
-            return 1;
-        }
-        console.log('Página inicial desde URL:', page);
-        return page;
-    });
+    /* Pasamos todos los defaultValue a funciones separadas del componente para que sea más fácil leer */
+    const [filters, setFilters] = useState(getInitialFilters());
+    const [textToFilter, setTextToFilter] = useState(getInitialTextToFilter());
+    const [currentPage, setCurrentPage] = useState(getInitialCurrentPage());
 
     const [jobs, setJobs] = useState([]);
     const [totalJobs, setTotalJobs] = useState(0);
@@ -47,17 +23,15 @@ export function SearchPage() {
         const fetchJobs = async () => {
             setLoading(true);
             try {
-                const params = new URLSearchParams();
-                params.set('limit', JOBS_PER_PAGE);
-                params.set('offset', (currentPage - 1) * JOBS_PER_PAGE);
+                const { params, setParam } = createAndSetParamIfExist();
 
-                if (debouncedTextToFilter)
-                    params.set('text', debouncedTextToFilter);
-                if (filters.technology)
-                    params.set('technology', filters.technology);
-                if (filters.location) params.set('type', filters.location);
-                if (filters.experienceLevel)
-                    params.set('level', filters.experienceLevel);
+                setParam('limit', JOBS_PER_PAGE);
+                setParam('offset', (currentPage - 1) * JOBS_PER_PAGE);
+
+                setParam('text', debouncedTextToFilter);
+                setParam('technology', filters.technology);
+                setParam('type', filters.location);
+                setParam('level', filters.experienceLevel);
 
                 const response = await fetch(`${API_URL}?${params.toString()}`);
                 const fetchedData = await response.json();
@@ -90,14 +64,15 @@ export function SearchPage() {
 
     // Sincronizar con la URL
     useEffect(() => {
-        const params = new URLSearchParams();
-        if (debouncedTextToFilter) params.set('text', debouncedTextToFilter);
-        if (filters.technology) params.set('technology', filters.technology);
-        if (filters.location) params.set('type', filters.location);
-        if (filters.experienceLevel)
-            params.set('level', filters.experienceLevel);
-        if (currentPage > 1) params.set('page', currentPage);
+        const { params, setParam } = createAndSetParamIfExist();
+        
+        setParam('text', debouncedTextToFilter);
+        setParam('technology', filters.technology);
+        setParam('type', filters.location);
+        setParam('level', filters.experienceLevel);
+        setParam('page', currentPage > 1 ? currentPage : 1);
 
+        console.log('params', params)
         console.log('Actualizando URL con parámetros:', params.toString());
 
         const newUrl = params.toString()
@@ -162,6 +137,7 @@ export function SearchPage() {
 
     return (
         <main>
+            {/* Excelente! Estuviste muy bien creando funciones helpers en vez de mandar los setters de los estados :) */}
             <SearchFormSection
                 searchValue={textToFilter}
                 onSearchChange={handleSearchChange}
@@ -181,4 +157,48 @@ export function SearchPage() {
             />
         </main>
     );
+}
+
+/* Hacemos esto para simplificar la lectura */
+const createAndSetParamIfExist = () => {
+    const params = new URLSearchParams(window.location.search);
+    
+    const setParam = (key, value) => {
+        if (value) params.set(key, value);
+        else params.delete(key);
+    };
+
+    return {
+        params,
+        setParam
+    }
+}; 
+
+const getInitialFilters = () => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        technology: params.get('technology') || '',
+        location: params.get('type') || '',
+        experienceLevel: params.get('level') || '',
+    };
+}
+
+const getInitialTextToFilter = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('text') || '';
+}
+
+const getInitialCurrentPage = () => {
+    const params = new URLSearchParams(window.location.search);
+    const pageParam = params.get('page');
+
+    if (!pageParam) return 1;
+
+    const page = Number(pageParam);
+
+    if (Number.isNaN(page) || page < 1) {
+        return 1;
+    }
+    console.log('Página inicial desde URL:', page);
+    return page;
 }
