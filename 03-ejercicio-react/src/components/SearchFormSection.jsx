@@ -1,5 +1,4 @@
-import { useId } from 'react';
-
+/* No hace falta usar useId() aquí */
 export function SearchFormSection({
     searchValue = '',
     onSearchChange,
@@ -10,10 +9,6 @@ export function SearchFormSection({
     levelValue = '',
     onLevelChange,
 }) {
-    const searchInputId = useId();
-    const technologyFilterId = useId();
-    const locationFilterId = useId();
-    const experienceLevelFilterId = useId();
 
     const handleSearchInput = (e) => {
         e.preventDefault();
@@ -66,9 +61,7 @@ export function SearchFormSection({
                     </svg>
 
                     <input
-                        id={searchInputId}
                         type='text'
-                        name={searchInputId}
                         placeholder='Buscar trabajos, empresas o habilidades'
                         value={searchValue}
                         onChange={handleSearchInput}
@@ -77,8 +70,6 @@ export function SearchFormSection({
 
                 <div className='search-filters'>
                     <select
-                        name={technologyFilterId}
-                        id={technologyFilterId}
                         value={technologyValue}
                         onChange={handleTechnologySelect}
                     >
@@ -93,8 +84,6 @@ export function SearchFormSection({
                     </select>
 
                     <select
-                        name={locationFilterId}
-                        id={locationFilterId}
                         value={locationValue}
                         onChange={handleLocationSelect}
                     >
@@ -113,8 +102,6 @@ export function SearchFormSection({
                     </select>
 
                     <select
-                        name={experienceLevelFilterId}
-                        id={experienceLevelFilterId}
                         value={levelValue}
                         onChange={handleLevelSelect}
                     >
