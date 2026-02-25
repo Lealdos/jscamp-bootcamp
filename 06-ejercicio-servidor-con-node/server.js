@@ -2,7 +2,13 @@ import { createServer } from 'node:http';
 import { json } from 'node:stream/consumers';
 import { randomUUID } from 'node:crypto';
 
-process.loadEnvFile();
+if (typeof process.loadEnvFile === 'function') {
+    try {
+        process.loadEnvFile();
+    } catch (error) {
+        if (error?.code !== 'ENOENT') throw error;
+    }
+}
 
 const port = process.env.PORT || 3000;
 
@@ -60,41 +66,110 @@ const users = [
 ];
 
 const server = createServer(async (req, res) => {
-    const { method, url } = req;
+    const { pathname, searchParams } = new URL(
+        req.url,
+        `http://${req.headers.host}`,
+    );
 
-    // if (!RouteHandler(url)) {
-    //     res.setHeader(404, { 'Content-Type': 'application/json' });
-    //     res.end(JSON.stringify({ message: 'Route not found' }));
-    // }
-    if (url === '/users') {
-        await handlerUsersRequest(method, res);
+    if (!RouteHandler(pathname)) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Route not found' }));
     }
-    if (url === '/health') {
-        res.setHeader(200, { 'Content-Type': 'application/json' });
+    if (pathname === '/users') {
+        await handlerUsersRequest(res, searchParams, req);
+    }
+    if (pathname === '/health') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }));
     }
 });
 
-async function handlerUsersRequest(method, res) {
-    if (method === 'GET') {
-        res.setHeader(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(users));
+function FilterUsers(searchParams) {
+    const searchParamsAllowed = ['minAge', 'maxAge', 'name', 'limit', 'offset'];
+    if (
+        [...searchParams.keys()].some(
+            (param) => !searchParamsAllowed.includes(param),
+        )
+    ) {
+        return {
+            result: [],
+            message: `Invalid query parameters. Allowed parameters are: ${searchParamsAllowed.join(
+                ', ',
+            )}`,
+        };
     }
-    if (method === 'POST') {
+
+    const numberParams = ['minAge', 'maxAge', 'limit', 'offset'];
+    const SearchParamsAreNumber = numberParams.some(
+        (param) =>
+            !!(
+                Number.isNaN(Number(searchParams.get(param))) ||
+                searchParams.get(param) === null
+            ),
+    );
+
+    if (!SearchParamsAreNumber) {
+        return { result: [], message: 'Invalid query parameter' };
+    }
+
+    const minAge = Number(searchParams.get('minAge'));
+    const maxAge = Number(searchParams.get('maxAge'));
+    const name = searchParams.get('name');
+    const limit = Number(searchParams.get('limit')) || users.length;
+    const offset = Number(searchParams.get('offset')) || 0;
+    let filteredUsers = users;
+
+    if (minAge) {
+        filteredUsers = filteredUsers.filter((user) => user.age >= minAge);
+    }
+    if (maxAge) {
+        filteredUsers = filteredUsers.filter((user) => user.age <= maxAge);
+    }
+    if (name) {
+        filteredUsers = filteredUsers.filter((user) =>
+            user.name.toLowerCase().includes(name.toLowerCase()),
+        );
+    }
+    if (limit) {
+        filteredUsers = filteredUsers.slice(0, limit);
+    }
+    if (offset) {
+        filteredUsers = filteredUsers.slice(offset);
+    }
+    return { result: filteredUsers, message: null };
+}
+
+async function handlerUsersRequest(res, searchParams, req) {
+    if (req.method === 'GET') {
+        if (FilterUsers(searchParams).message) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(
+                JSON.stringify({
+                    message: FilterUsers(searchParams).message,
+                }),
+            );
+            return;
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(FilterUsers(searchParams).result));
+    }
+
+    if (req.method === 'POST') {
         const body = await json(req);
         const newUser = {
             id: randomUUID(),
             ...body,
         };
         users.push(newUser);
-        res.setHeader(201, { 'Content-Type': 'application/json' });
+        res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(newUser));
     }
 }
 
 function RouteHandler(url) {
     const routesAccepted = ['/users', '/health'];
-    return routesAccepted.includes(url) ? true : false;
+    return routesAccepted.includes(url);
 }
 server.listen(port, () => {
     const address = server.address();
