@@ -26,7 +26,8 @@ const useFilters = () => {
     const [currentPage, setCurrentPage] = useState(() => {
         const pageParam = searchParams.get('page');
 
-        if (!pageParam) return 1;
+        /* No hace falta, si pageParam es falsy, Number(pageParam) será 0. Y como 0 es menos a 1, retornamos 1 en el siguiente if*/
+        // if (!pageParam) return 1;
 
         const page = Number(pageParam);
 
@@ -79,6 +80,7 @@ const useFilters = () => {
     useEffect(() => {
         setSearchParams(() => {
             // Clear all existing params
+            /* Buena manera de hacerlo para evitar tener que usar un `delete` en caso de que el parámetro no exista */
             const params = new URLSearchParams();
             // Add only needed params
             if (textToFilter) params.set('text', textToFilter);
