@@ -18,8 +18,9 @@ function App() {
                 <Routes>
                     <Route path='/' element={<HomePage />} />
                     <Route path='/search' element={<SearchPage />} />
-                    <Route path='*' element={<NotFoundPage />} />
                     <Route path='/job/:id' element={<DetailsPage />} />
+                    {/* No está mal, pero siempre se suele dejar al final la ruta comodín o 404 (*) */}
+                    <Route path='*' element={<NotFoundPage />} />
                 </Routes>
             </Suspense>
             <Footer />
