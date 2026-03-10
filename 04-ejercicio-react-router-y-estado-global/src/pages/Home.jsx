@@ -6,7 +6,8 @@ export default function HomePage() {
     const handleSearch = (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
-        const searchTerm = formData.get('search');
+        /* Hacemos un .trim() para evitar que el usuario envíe espacios en blanco */
+        const searchTerm = formData.get('search').trim();
 
         const url = searchTerm
             ? `/search?text=${encodeURIComponent(searchTerm)}`
