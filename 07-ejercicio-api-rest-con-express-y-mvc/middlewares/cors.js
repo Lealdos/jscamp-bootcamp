@@ -8,7 +8,7 @@ export function corsMiddleware({
 } = {}) {
     return cors({
         origin: (origin, callback) => {
-            if (ACCEPTED_ORIGINS.includes(origin)) {
+            if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
