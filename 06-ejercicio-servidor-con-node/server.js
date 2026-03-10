@@ -68,18 +68,20 @@ const users = [
 ];
 
 const server = createServer(async (req, res) => {
-    const { searchParams } = new URL(
-        req.url,
-        `http://${req.headers.host}`,
-    );
+    const { searchParams } = new URL(req.url, `http://${req.headers.host}`);
 
     /* 
     Debajo dejé algunas alternativas a `routeHandler` y cómo entendía la fina linea entre: vale la pena separar la responsabilidad o no. Aquí opto por quitar el if y manejar el 404 directamente en caso de que no entre a ninguna de las rutas que tenemos en los `if` siguientes.
     */
-    /* if (!routeHandler(pathname)) {
+
+    /* 
+     const validPaths = ['/users', '/health'];
+    if (!isValidPath(pathname, validPaths)) {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Route not found' }));
-    } */
+    } 
+        
+    */
     if (pathname === '/users') {
         await handlerUsersRequest(res, searchParams, req);
     }
@@ -200,10 +202,8 @@ Con el nombre de la función sabemos:
     return !allowedPaths.includes(path);
 } */
 
-
-function routeHandler(url) {
-    const routesAccepted = ['/users', '/health'];
-    return routesAccepted.includes(url);
+function isValidPath(path, allowedPaths) {
+    return allowedPaths.includes(path);
 }
 server.listen(port, () => {
     const address = server.address();
