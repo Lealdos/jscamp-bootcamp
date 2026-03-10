@@ -1,3 +1,5 @@
+/* IMPORTANTE: Todas las funciones que hagamos deben empezar en minúscula. No da error pero es una buena práctica, por convención y para separarlas de las clases (que si empiezan con mayúscula) */
+
 import { createServer } from 'node:http';
 import { json } from 'node:stream/consumers';
 import { randomUUID } from 'node:crypto';
@@ -66,15 +68,18 @@ const users = [
 ];
 
 const server = createServer(async (req, res) => {
-    const { pathname, searchParams } = new URL(
+    const { searchParams } = new URL(
         req.url,
         `http://${req.headers.host}`,
     );
 
-    if (!RouteHandler(pathname)) {
+    /* 
+    Debajo dejé algunas alternativas a `routeHandler` y cómo entendía la fina linea entre: vale la pena separar la responsabilidad o no. Aquí opto por quitar el if y manejar el 404 directamente en caso de que no entre a ninguna de las rutas que tenemos en los `if` siguientes.
+    */
+    /* if (!routeHandler(pathname)) {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Route not found' }));
-    }
+    } */
     if (pathname === '/users') {
         await handlerUsersRequest(res, searchParams, req);
     }
@@ -82,9 +87,14 @@ const server = createServer(async (req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }));
     }
+
+    /* Para ahorrarnos un `if`, si no entra a ningún caso anterior, entonces es 404 */
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Route not found' }));
 });
 
-function FilterUsers(searchParams) {
+/* Siempre dejemos el verbo en el nombre de la función para saber que hace. Obtiene, modifica o elimina? Por eso agregué el `get`. Si queremos ir un poco más al detalle (no es necesario pero te lo dejo igual, es llamarlo `getFilterUsersBySearchParams). Damos información al leer la función de que estamos obteniendo los usuarios filtrados por los parámetros de búsqueda. Cuando el proyecto se hace grande me gusta definirlo así */
+function getFilterUsers(searchParams) {
     const searchParamsAllowed = ['minAge', 'maxAge', 'name', 'limit', 'offset'];
     if (
         [...searchParams.keys()].some(
@@ -139,20 +149,18 @@ function FilterUsers(searchParams) {
     return { result: filteredUsers, message: null };
 }
 
+/* Esto está Excelente!! */
 async function handlerUsersRequest(res, searchParams, req) {
     if (req.method === 'GET') {
-        if (FilterUsers(searchParams).message) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(
-                JSON.stringify({
-                    message: FilterUsers(searchParams).message,
-                }),
-            );
+        /* Antes estabamos ejecutando la función dos veces. Ahora lo hacemos una vez, y a partir del resultado de `result` y `message` tomamos decisiones */
+        const { result, message } = getFilterUsers(searchParams);
+
+        if (message) {
+            sendJson(res, 400, { message });
             return;
         }
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(FilterUsers(searchParams).result));
+        sendJson(res, 200, result);
     }
 
     if (req.method === 'POST') {
@@ -162,12 +170,38 @@ async function handlerUsersRequest(res, searchParams, req) {
             ...body,
         };
         users.push(newUser);
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(newUser));
+        sendJson(res, 201, newUser);
     }
 }
 
-function RouteHandler(url) {
+/* Estamos repitiendo mucho la cabecera de `json`. Podemos crear una función para hacer esto: */
+function sendJson(res, statusCode, data) {
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(data));
+}
+
+/* Está muy bien y soy partidario de separar responsabilidades por funciones. Pero siempre y cuando hacer esto haga que el código sea más legible y entendible. En este caso me pasó lo siguiente:
+No sabía que hacía routerHandler y cómo funcionaba, tuve que ir a buscar la función para entender que estaba manejando las rutas /users y /health.
+
+Acá veo dos caminos:
+1. Cambiar el nombre de la función y pasarle las rutas aceptadas como parámetro
+2. No usar la función
+*/
+
+/*
+Ejemplo 1:
+Con el nombre de la función sabemos:
+
+- Qué hace (isInvalidPath) - El path que pasamos es inválido con respecto a la lista que le pasamos?
+- Qué recibe (path, allowedPaths)
+- Qué retorna (boolean) [Siempre que una función empieza con un `is` o con un `has`, entendemos que retorna un boolean]
+
+/* function isInvalidPath(path, allowedPaths) {
+    return !allowedPaths.includes(path);
+} */
+
+
+function routeHandler(url) {
     const routesAccepted = ['/users', '/health'];
     return routesAccepted.includes(url);
 }
