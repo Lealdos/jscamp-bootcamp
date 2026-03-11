@@ -10,6 +10,9 @@ app.use(express.json());
 app.use(corsMiddleware());
 
 app.use('/jobs', jobsRouter);
+app.get('/', (req, res) => {
+    res.send('Bienvenido a la API de Jobs');
+});
 
 app.listen(PORT, () => {
     console.log(`Servidor levantado en http://localhost:${PORT}`);
