@@ -5,7 +5,7 @@ import {
     validatePartialJobSchema,
 } from '../schemas/jobs.js';
 
-export function validateJob(req, res, next) {
+export function validateCreateJob(req, res, next) {
     const { success, data, error } = validateJobSchema(req.body);
     if (!success) {
         return res
@@ -16,7 +16,7 @@ export function validateJob(req, res, next) {
     next();
 }
 
-export function validatePartialJob(req, res, next) {
+export function validateUpdatePartialJob(req, res, next) {
     const { success, data, error } = validatePartialJobSchema(req.body);
     if (!success) {
         return res
