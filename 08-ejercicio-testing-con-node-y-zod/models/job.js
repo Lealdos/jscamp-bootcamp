@@ -74,7 +74,7 @@ export class JobModel {
 
     static async update({ id, sentJob }) {
         const output = {
-            status: 200,
+            status: 204,
             error: null,
         };
 
