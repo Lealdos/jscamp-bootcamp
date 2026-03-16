@@ -14,7 +14,7 @@ import * as z from 'zod';
 const jobSchema = z.object({
     titulo: z
         .string()
-        .min(1, 'El título es requerido')
+        .min(3, 'El título es requerido')
         .max(100, 'El título no puede tener más de 100 caracteres'),
     empresa: z.string().min(1, 'La empresa es requerida'),
     ubicacion: z.string().min(1, 'La ubicación es requerida'),
