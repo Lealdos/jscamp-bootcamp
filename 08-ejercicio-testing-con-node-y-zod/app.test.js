@@ -12,7 +12,6 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert';
 import app from './app.js';
-import { de } from 'zod/v4/locales';
 
 let server;
 
@@ -128,12 +127,12 @@ describe('Post a job api /jobs', () => {
             data: jobData,
             content: {
                 description:
-                    'Data Driven Co. está en busca de un Analista de Datos para unirse a nuestro equipo en Ciudad de México. Esta posición es ideal para profesionales que están comenzando su carrera en análisis de datos y desean trabajar con grandes volúmenes de información para generar insights valiosos que impulsen decisiones de negocio.',
+                    'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                 responsibilities:
-                    '- Recolectar, procesar y analizar grandes conjuntos de datos para identificar patrones y tendencias.\n- Crear visualizaciones e informes utilizando herramientas como Tableau o Power BI.\n- Colaborar con diferentes departamentos para entender sus necesidades de datos.\n- Escribir consultas SQL eficientes para extraer y transformar datos.\n- Desarrollar scripts en Python o R para automatizar análisis recurrentes.\n- Presentar hallazgos y recomendaciones a stakeholders no técnicos.',
+                    'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                 requirements:
-                    '- Título universitario en Estadística, Matemáticas, Ciencias de la Computación o campo relacionado.\n- Conocimiento sólido en SQL para consultas de bases de datos.\n- Experiencia con Python (Pandas, NumPy) o R para análisis de datos.\n- Familiaridad con herramientas de visualización de datos.\n- Capacidad analítica y atención al detalle.\n- Buenas habilidades de comunicación para explicar resultados técnicos.',
-                about: 'Data Driven Co. es una empresa líder en soluciones de análisis de datos que ayuda a organizaciones a tomar decisiones basadas en información. .',
+                    'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                about: 'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
             },
         };
 
