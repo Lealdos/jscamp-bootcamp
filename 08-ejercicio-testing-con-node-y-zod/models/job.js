@@ -1,166 +1,178 @@
-import jobs from '../jobs.json' with {type: 'json'}
+import jobs from '../jobs.json' with { type: 'json' };
 
 export class JobModel {
-  static async getAll({ text, technology, type, level, limit, offset }) {
+    static async getAll({ text, technology, type, level, limit, offset }) {
+        const filteredJobs = jobs.filter((job) => {
+            const normalizeTech = () => text.toLowerCase();
 
-    const filteredJobs = jobs.filter(job => {
+            const matchText = text
+                ? job.titulo.toLowerCase().includes(normalizeTech) ||
+                  job.descripcion.toLowerCase().includes(normalizeTech)
+                : true;
 
-      const normalizeTech = () => text.toLowerCase()
+            const matchTech = technology
+                ? job.data.technology.includes(technology)
+                : true;
+            const matchType = type ? job.data.modalidad === type : true;
+            const matchLevel = level ? job.data.nivel === level : true;
 
-      const matchText = text
-        ? job.titulo.toLowerCase().includes(normalizeTech)
-        || job.descripcion.toLowerCase().includes(normalizeTech)
-        : true
+            return matchText && matchTech && matchType && matchLevel;
+        });
 
-      const matchTech = technology ? (job.data.technology.includes(technology)) : true
-      const matchType = type ? (job.data.modalidad === type) : true
-      const matchLevel = level ? (job.data.nivel === level) : true
+        const limitNumber = Number(limit);
+        const offsetNumber = Number(offset);
 
-      return matchText && matchTech && matchType && matchLevel
-    })
+        const paginatedJobs = filteredJobs.slice(
+            offsetNumber,
+            offsetNumber + limitNumber,
+        );
 
-    const limitNumber = Number(limit)
-    const offsetNumber = Number(offset)
-
-    const paginatedJobs = filteredJobs.slice(offsetNumber, offsetNumber + limitNumber)
-
-    return { paginatedJobs, limitNumber, offsetNumber }
-  }
-
-  static async getId(id) {
-
-    const job = jobs.find(job => job.id === id)
-
-    const output = {
-      status: 200,
-      job: job
+        return { paginatedJobs, limitNumber, offsetNumber };
     }
 
-    if (!output.job) {
-      output.status = 404
-      output.job = { error: 'Job Not Found' }
+    static async getId(id) {
+        const job = jobs.find((job) => job.id === id);
+
+        const output = {
+            status: 200,
+            job: job,
+        };
+
+        if (!output.job) {
+            output.status = 404;
+            output.job = { error: 'Job Not Found' };
+        }
+
+        return output;
     }
 
-    return output
-  }
-
-  static async create({ titulo, empresa, ubicacion, descripcion, data }) {
-
-    const output = {
-      status: 201,
-      newJob: {
-        id: crypto.randomUUID(),
+    static async create({
         titulo,
         empresa,
         ubicacion,
         descripcion,
-        data
-      }
+        data,
+        content,
+    }) {
+        const output = {
+            status: 201,
+            newJob: {
+                id: crypto.randomUUID(),
+                titulo,
+                empresa,
+                ubicacion,
+                descripcion,
+                data,
+                content,
+            },
+        };
+
+        jobs.push(output.newJob);
+
+        return output;
     }
 
-    jobs.push(output.newJob)
+    static async update({ id, sentJob }) {
+        const output = {
+            status: 204,
+            error: null,
+        };
 
-    return output
-  }
+        const errorStatus = 404;
+        const errorMessage = 'Target Job Not Found';
 
-  static async update({ id, sentJob }) {
+        if (!id) {
+            output.status = errorStatus;
+            output.error = errorMessage;
 
-    const output = {
-      status: 204,
-      error: null
+            return output;
+        }
+
+        const jobIndex = jobs.findIndex((job) => job.id === id);
+
+        if (jobIndex === -1) {
+            output.status = errorStatus;
+            output.error = errorMessage;
+
+            return output;
+        }
+
+        jobs[jobIndex] = { ...sentJob, id };
+
+        return output;
     }
 
-    const errorStatus = 404
-    const errorMessage = 'Target Job Not Found'
+    static async partialUpdate({ id, sentJob }) {
+        const {
+            titulo = null,
+            empresa = null,
+            ubicacion = null,
+            descripcion = null,
+            data = null,
+        } = sentJob;
 
-    if (!id) {
-      output.status = errorStatus
-      output.error = errorMessage
+        const output = {
+            status: 204,
+            error: null,
+        };
 
-      return output
+        const errorStatus = 404;
+        const errorMessage = 'Target Job Not Found';
+
+        if (!id) {
+            output.status = errorStatus;
+            output.error = errorMessage;
+
+            return output;
+        }
+
+        const jobIndex = jobs.findIndex((job) => job.id === id);
+
+        if (jobIndex === -1) {
+            output.status = errorStatus;
+            output.error = errorMessage;
+
+            return output;
+        }
+
+        const job = jobs[jobIndex];
+
+        job.titulo = titulo ?? job.titulo;
+        job.empresa = empresa ?? job.empresa;
+        job.ubicacion = ubicacion ?? job.ubicacion;
+        job.descripcion = descripcion ?? job.descripcion;
+        job.data = data ?? job.data;
+
+        return output;
     }
 
-    const jobIndex = jobs.findIndex(job => job.id === id)
+    static async delete(id) {
+        const output = {
+            status: 204,
+            error: null,
+        };
 
-    if (jobIndex === -1) {
-      output.status = errorStatus
-      output.error = errorMessage
+        const errorStatus = 404;
+        const errorMessage = 'Target Job Not Found';
 
-      return output
+        if (!id) {
+            output.status = errorStatus;
+            output.error = errorMessage;
+
+            return output;
+        }
+
+        const jobIndex = jobs.findIndex((job) => job.id === id);
+
+        if (jobIndex === -1) {
+            output.status = errorStatus;
+            output.error = errorMessage;
+
+            return output;
+        }
+
+        jobs.splice(jobIndex, 1);
+
+        return output;
     }
-
-    jobs[jobIndex] = { ...sentJob, id }
-
-    return output
-  }
-
-  static async partialUpdate({ id, sentJob }) {
-
-    const { titulo = null, empresa = null, ubicacion = null, descripcion = null, data = null } = sentJob
-
-    const output = {
-      status: 204,
-      error: null
-    }
-
-    const errorStatus = 404
-    const errorMessage = 'Target Job Not Found'
-
-    if (!id) {
-      output.status = errorStatus
-      output.error = errorMessage
-
-      return output
-    }
-
-    const jobIndex = jobs.findIndex(job => job.id === id)
-
-    if (jobIndex === -1) {
-      output.status = errorStatus
-      output.error = errorMessage
-
-      return output
-    }
-
-    const job = jobs[jobIndex]
-
-    job.titulo = titulo ?? job.titulo
-    job.empresa = empresa ?? job.empresa
-    job.ubicacion = ubicacion ?? job.ubicacion
-    job.descripcion = descripcion ?? job.descripcion
-    job.data = data ?? job.data
-
-    return output
-  }
-
-  static async delete(id) {
-
-    const output = {
-      status: 204,
-      error: null
-    }
-
-    const errorStatus = 404
-    const errorMessage = 'Target Job Not Found'
-
-    if (!id) {
-      output.status = errorStatus
-      output.error = errorMessage
-
-      return output
-    }
-
-    const jobIndex = jobs.findIndex(job => job.id === id)
-
-    if (jobIndex === -1) {
-      output.status = errorStatus
-      output.error = errorMessage
-
-      return output
-    }
-
-    jobs.splice(jobIndex, 1)
-
-    return output
-  }
 }
