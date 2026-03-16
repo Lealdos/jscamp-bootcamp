@@ -336,20 +336,6 @@ describe('Patch api /jobs/:id', () => {
 });
 
 // ### Tests para DELETE /jobs/:id
-/*
- Escribe tests para verificar la eliminación de un job.
-
-#### Tests requeridos
-
-1. **Debe recibir 204 y eliminar el trabajo**
-   - Usar un ID válido (ej: `f62d8a34-923a-4ac2-9b0b-14e0ac2f5405`)
-   - Verificar status code 204
-   - Hacer un GET del mismo job y verificar que devuelve 404
-
-2. **Debe devolver 404 cuando el ID no existe**
-   - Usar un ID inválido
-   - Verificar status code 404
-   */
 
 describe('Delete api /jobs/:id', () => {
     it('debe responder con 204 y eliminar el trabajo', async () => {
