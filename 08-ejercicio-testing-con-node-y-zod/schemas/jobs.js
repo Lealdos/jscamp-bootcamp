@@ -63,12 +63,10 @@ const jobSchema = z.object({
         .optional(),
 });
 
-function validateJobSchema(job) {
+export function validateJobSchema(job) {
     return jobSchema.safeParse(job);
 }
 
-function validatePartialJobSchema(partialJob) {
+export function validatePartialJobSchema(partialJob) {
     return jobSchema.partial().safeParse(partialJob);
 }
-
-export { validateJobSchema, validatePartialJobSchema };
