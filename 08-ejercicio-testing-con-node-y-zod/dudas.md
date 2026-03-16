@@ -1,3 +1,7 @@
 <!-- Aquí puedes poner tus dudas del ejercicio -->
 
 - En el video de testing midu usa import test de 'node:test' pero buscando y preguntandole a la IA vi que aparentemente 'it' es una practica mas comun hoy en dia ya que siga la convencion de librerias populares de test como lo son jest o motcha es buena idea que lo mantenga asi o es mejor volver a test?
+
+- No seria mejor separar los test en distintos ficheros segun el end point? pues el fichero app.test.js es sumamente largo y dificil de seguir
+
+- Hay alguna manera de hacer el codigo de los test menos repetitivo?
