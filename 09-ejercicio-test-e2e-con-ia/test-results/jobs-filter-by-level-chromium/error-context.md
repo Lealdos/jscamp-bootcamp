@@ -1,0 +1,61 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - link "DevJobs" [ref=e4] [cursor=pointer]:
+      - /url: /
+      - heading "DevJobs" [level=1] [ref=e5]:
+        - img [ref=e6]
+        - text: DevJobs
+    - navigation [ref=e9]:
+      - link "Empleos" [ref=e10] [cursor=pointer]:
+        - /url: /search
+    - button "Iniciar sesion" [ref=e11] [cursor=pointer]
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - heading "Encuentra tu próximo trabajo" [level=1] [ref=e14]
+      - paragraph [ref=e15]: Explora miles de oportunidades en el sector tecnológico.
+      - search [ref=e16]:
+        - generic [ref=e17]:
+          - img [ref=e18]
+          - textbox "Buscar trabajos, empresas o habilidades" [ref=e22]
+          - button "✖︎" [ref=e23] [cursor=pointer]
+        - generic [ref=e24]:
+          - combobox [ref=e25] [cursor=pointer]:
+            - option "Tecnología" [selected]
+            - option "JavaScript"
+            - option "Python"
+            - option "React"
+            - option "Node.js"
+            - option "Java"
+            - option "C#"
+            - option "C"
+            - option "C++"
+            - option "Ruby"
+            - option "PHP"
+          - combobox [ref=e26] [cursor=pointer]:
+            - option "Ubicación" [selected]
+            - option "Remoto"
+            - option "Ciudad de México"
+            - option "Guadalajara"
+            - option "Monterrey"
+            - option "Barcelona"
+          - combobox [ref=e27] [cursor=pointer]:
+            - option "Nivel de experiencia"
+            - option "Junior"
+            - option "Mid-level"
+            - option "Senior" [selected]
+            - option "Lead"
+    - generic [ref=e28]:
+      - heading "Resultados de búsqueda" [level=2] [ref=e29]
+      - paragraph [ref=e30]: Cargando empleos...
+      - navigation [ref=e31]:
+        - link:
+          - /url: /search?level=senior&page=0
+          - img
+        - link [ref=e32] [cursor=pointer]:
+          - /url: /search?level=senior&page=2
+          - img [ref=e33]
+  - contentinfo [ref=e36]: © 2025 DevJobs. Todos los derechos reservados.
+```
