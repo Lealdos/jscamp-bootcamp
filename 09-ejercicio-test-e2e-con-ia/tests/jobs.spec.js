@@ -120,25 +120,33 @@ test('pagination appears with many results', async ({ page }) => {
     await expect(page.getByTestId('pagination')).toBeVisible();
 });
 
-test('navigate to next page', async ({ page }) => {
+test('navigate to next page with a previous search', async ({ page }) => {
     await page.goto('http://localhost:5173');
     const searchBox = page.getByRole('searchbox');
-    await searchBox.fill('Developer');
+    await searchBox.fill('python');
     await searchBox.press('Enter');
-    await expect(page).toHaveURL(/search\?text=Developer/);
+    await expect(page).toHaveURL(/search\?text=python/);
 
     await expect(page.getByTestId('pagination')).toBeVisible();
     await page.getByTestId('next-button').click();
-    await expect(page).toHaveURL(/search\?text=Developer&page=2/);
+    await expect(page).toHaveURL(/search\?text=python&page=2/);
 });
 
-/*
+test('navigate back to previous page', async ({ page }) => {
+    await page.goto('http://localhost:5173');
+    const searchBox = page.getByRole('searchbox');
+    await searchBox.fill('python');
+    await searchBox.press('Enter');
+    await expect(page).toHaveURL(/search\?text=python/);
 
- Séptimo ejercicio: Test de detalle de empleo
+    await expect(page.getByTestId('pagination')).toBeVisible();
+    await page.getByTestId('next-button').click();
+    await expect(page).toHaveURL(/search\?text=python&page=2/);
+    await page.getByTestId('previous-button').click();
+    await expect(page).toHaveURL(/search\?text=python/);
+});
 
-
-
-   */
+// Séptimo ejercicio: Test de detalle de empleos
 
 test('job detail and apply', async ({ page }) => {
     await page.goto('http://localhost:5173');
