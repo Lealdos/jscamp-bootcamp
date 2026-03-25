@@ -57,10 +57,18 @@ function DetailPageHeader({ job }) {
 
 function DetailApplyButton() {
     const { isLoggedIn } = useAuthStore();
+    const [applied, setApplied] = useState(false);
+
+    const appliedText = applied ? 'Aplicado' : 'Aplicar ahora';
+    const buttonText = isLoggedIn ? appliedText : 'Inicia sesión para aplicar';
 
     return (
-        <button disabled={!isLoggedIn} className={styles.applyButton}>
-            {isLoggedIn ? 'Aplicar ahora' : 'Inicia sesión para aplicar'}
+        <button
+            disabled={!isLoggedIn}
+            className={styles.applyButton}
+            onClick={() => setApplied(true)}
+        >
+            {buttonText}
         </button>
     );
 }
