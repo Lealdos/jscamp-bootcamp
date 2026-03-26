@@ -11,6 +11,8 @@ export type ApplicationStatus =
     | 'rejected';
 
 export type Technology =
+    | 'css'
+    | 'tailwind'
     | 'react'
     | 'node'
     | 'python'
