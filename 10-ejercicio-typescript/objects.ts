@@ -31,6 +31,6 @@ export type Candidate = {
     email: string;
     phone?: string;
     skills: Technology[];
-    experienceLevel: ExperienceLevel;
-    resume: string;
+    experienceYears: number;
+    resume?: string;
 };
