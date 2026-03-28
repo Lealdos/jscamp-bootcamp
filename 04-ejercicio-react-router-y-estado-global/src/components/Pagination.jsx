@@ -38,7 +38,7 @@ export function Pagination({ currentPage = 1, totalPages = 10, onPageChange }) {
     };
 
     const buildPageUrl = (page) => {
-        const url = new URL(window.location);
+        const url = new URL(globalThis.location);
         url.searchParams.set('page', page);
         return `${url.pathname}?${url.searchParams.toString()}`;
     };
@@ -49,7 +49,7 @@ export function Pagination({ currentPage = 1, totalPages = 10, onPageChange }) {
                 href={buildPageUrl(currentPage - 1)}
                 style={stylePrevButton}
                 onClick={handlePrevClick}
-                data-testid='prev-button'
+                data-testid='previous-button'
             >
                 <svg
                     width='16'
