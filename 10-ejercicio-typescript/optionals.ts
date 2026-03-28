@@ -45,7 +45,7 @@ export function advancedSearch(jobs: Job[], options?: SearchOptions): Job[] {
 }
 
 // Función con valores por defecto
-export function getRecentJobs(jobs: Job[], days: number = 5): Job[] {
+export function getRecentJobs(jobs: Job[], days: number = 30): Job[] {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
