@@ -6,7 +6,7 @@ import {
     filterByTechnology,
     searchJobs,
 } from './functions.ts';
-import { Job } from './objects.ts';
+import type { Job } from './objects.ts';
 import { ApplicationStatus } from './types.ts';
 
 // Interface para servicios de búsqueda

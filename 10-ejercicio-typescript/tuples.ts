@@ -1,6 +1,6 @@
 /* En este ejercicio deberás tipar las tuplas con los tipos ya creados, y usando `number` para la tupla de `SalaryRange` y `Coordinates` */
 
-import { Job } from './objects';
+import type { Job } from './objects.ts';
 
 // Tupla para coordenadas de ubicación
 export type Coordinates = [number, number]; // [latitud, longitud]

@@ -7,7 +7,7 @@ Tendrás que tipar la función safeSearch y displaySearchResults, verificando qu
 */
 
 import { searchJobs } from './functions.ts';
-import { Job } from './objects.ts';
+import type { Job } from './objects.ts';
 
 export type SearchResult =
     | { success: true; jobs: Job[]; count: number }

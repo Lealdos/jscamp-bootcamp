@@ -1,7 +1,7 @@
 /* Aquí deberás usar los tipos creados en los ejercicios anteriores para definir los tipos de los parámetros y el valor de retorno de las funciones */
 
-import { ExperienceLevel, Technology } from './types.ts';
-import { Job } from './objects.ts';
+import type { ExperienceLevel, Technology } from './types.ts';
+import type { Job } from './objects.ts';
 
 export function filterByExperience(jobs: Job[], level: ExperienceLevel): Job[] {
     return jobs.filter((job) => job.experienceLevel === level);

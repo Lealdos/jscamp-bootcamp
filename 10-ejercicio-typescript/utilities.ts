@@ -1,6 +1,6 @@
 /* En este ejercicio deberás tipar las funciones con los tipos ya creados, y usar `Partial` y `Readonly` en cada caso. */
 
-import { Job } from './objects';
+import type { Job } from './objects.ts';
 
 export function updateJob(job: Job, updates: Partial<Job>): Job {
     return { ...job, ...updates };

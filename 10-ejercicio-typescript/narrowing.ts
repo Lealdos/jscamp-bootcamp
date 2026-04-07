@@ -1,7 +1,7 @@
 /* En este ejercicio deberás tipar las funciones con los tipos ya creados. Ten en cuenta que los tipos de experiencia son literales, por lo que tendrás que corregir el código para que funcione correctamente. */
 
-import { Candidate, Job } from './objects.ts';
-import { Technology, ExperienceLevel } from './types.ts';
+import type { Candidate, Job } from './objects.ts';
+import type { Technology, ExperienceLevel } from './types.ts';
 
 // Validar candidato para un empleo
 export function isQualified(candidate: Candidate, job: Job): boolean {
