@@ -34,37 +34,103 @@ after(() => {
     });
 });
 
+const handleGetRequestByPathAndCheckFormat = async (path = '/', status = 200) => {
+    const res = await fetch(`${baseURL}${path}`);
+    assert.strictEqual(res.status, status);
+    assert.strictEqual(
+      res.headers.get('content-type')?.includes('application/json'),
+      true,
+    );
+
+    const data = await res.json();
+    return data;
+};
+
+const handlePostRequestByPathAndCheckFormat = async (path = '/', body = {}, statusExpected = 200) => {
+    const res = await fetch(`${baseURL}${path}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    });
+    assert.strictEqual(res.status, statusExpected);
+    assert.strictEqual(
+      res.headers.get('content-type')?.includes('application/json'),
+      true,
+    );
+
+    const data = await res.json();
+    return data;
+};
+
+const handlePutRequestByPathAndCheckFormat = async (path = '/', body = {}, statusExpected = 200) => {
+    const res = await fetch(`${baseURL}${path}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    });
+    
+    assert.strictEqual(res.status, statusExpected);
+};
+
+const handlePatchRequestByPathAndCheckFormat = async (path = '/', body = {}, statusExpected = 200) => {
+    const res = await fetch(`${baseURL}${path}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    });
+
+    assert.strictEqual(res.status, statusExpected);
+};
+
+const handleDeleteRequestByPathAndCheckFormat = async (path = '/', statusExpected = 200) => {
+    const res = await fetch(`${baseURL}${path}`, {
+        method: 'DELETE',
+    });
+    
+    assert.strictEqual(res.status, statusExpected);
+    return res;
+};
+
 describe('Get api /jobs', () => {
     it('debe responder con 200 y un array de trabajos', async () => {
-        const res = await fetch(`${baseURL}/jobs`);
-
-        assert.strictEqual(res.status, 200);
-        assert.strictEqual(
-            res.headers.get('content-type')?.includes('application/json'),
-            true,
-        );
-
-        const data = await res.json();
-        const { data: jobs } = data;
+        const { data: jobs } = await handleGetRequestByPathAndCheckFormat('/jobs');
         assert.strictEqual(Array.isArray(jobs), true);
     });
 });
 
 const technologies = ['react', 'node', 'angular', 'python', 'java', 'go'];
 
-technologies.forEach((tech) => {
-    describe(`Get api /jobs??technology=${tech}`, () => {
+// La responsabilidad del test es una sola, verificar que todos los trabajos retornados incluyan la tecnología especificada. Por lo tanto, no hay que hacer un test para cada tecnología, sino uno solo que verifique todas.
+
+// Lo hago aquí debajo y comento tu solución:
+  describe(`Get api /jobs?technology={${technologies.map((tech) => tech).join(',')}}`, () => {
+        it(`debe responder con 200 y trabajos que incluyan todas las tecnologías especificadas en su data.technology`, async () => {
+            const allTestsByTechnology = technologies.map((tech) => {
+                return handleGetRequestByPathAndCheckFormat(`/jobs?technology=${tech}`);
+            });
+
+            const results = await Promise.all(allTestsByTechnology);
+
+            results.forEach(({ data: jobs }, i) => {
+                assert.strictEqual(Array.isArray(jobs), true);
+                jobs.forEach((job) => {
+                     assert.strictEqual(job.data.technology.includes(technologies[i]), true);
+                });
+            });
+        });
+    });
+
+/* technologies.forEach((tech) => {
+    describe(`Get api /jobs?technology=${tech}`, () => {
         it(`debe responder con 200 y trabajos que incluyan ${tech} en su data.technology`, async () => {
-            const res = await fetch(`${baseURL}/jobs?technology=${tech}`);
+            const { data: jobs } = await handleGetRequestByPathAndCheckFormat(`/jobs?technology=${tech}`);
 
-            assert.strictEqual(res.status, 200);
-            assert.strictEqual(
-                res.headers.get('content-type')?.includes('application/json'),
-                true,
-            );
-
-            const data = await res.json();
-            const { data: jobs } = data;
             assert.strictEqual(Array.isArray(jobs), true);
 
             jobs.forEach((job) => {
@@ -72,27 +138,37 @@ technologies.forEach((tech) => {
             });
         });
     });
-});
+}); */
 
 describe('Get api /jobs?limit=2', () => {
     it('debe responder con 200 y un array de 2 trabajos', async () => {
-        const res = await fetch(`${baseURL}/jobs?limit=2`);
+        // Pasamos nuestro limit a una variable, ya que se reutiliza en varios lados
+        const LIMIT = 2;
+        
+        const { data: jobs, limit } = await handleGetRequestByPathAndCheckFormat(`/jobs?limit=${LIMIT}`);
 
-        assert.strictEqual(res.status, 200);
-        assert.strictEqual(
-            res.headers.get('content-type')?.includes('application/json'),
-            true,
-        );
-
-        const data = await res.json();
-        const { data: jobs, limit } = data;
         assert.strictEqual(Array.isArray(jobs), true);
-        assert.strictEqual(limit, 2);
-        assert.strictEqual(jobs.length, 2);
+        assert.strictEqual(limit, LIMIT);
+        assert.strictEqual(jobs.length, LIMIT);
     });
 });
 
 describe('Get api /jobs?offset=1', () => {
+    it('debe responder con 200 y un array de trabajos comenzando desde el segundo job', async () => {
+        const OFFSET = 1;
+        const { data: jobsByOffset } = await handleGetRequestByPathAndCheckFormat(`/jobs?offset=${OFFSET}`);
+
+        assert.strictEqual(Array.isArray(jobsByOffset), true);
+        
+        // En vez de agarrar el ID a mano, vamos a hacerlo dinámico (es más largo pero la idea de los tests es que se mantengan en el tiempo)
+        const { data: allJobs } = await handleGetRequestByPathAndCheckFormat(`/jobs`);
+        const jobToCompare = allJobs[OFFSET];
+
+        assert.strictEqual(jobsByOffset[0].id, jobToCompare.id);
+    });
+});
+
+/* describe('Get api /jobs?offset=1', () => {
     it('debe responder con 200 y un array de trabajos comenzando desde el segundo job', async () => {
         const res = await fetch(`${baseURL}/jobs?offset=1`);
 
@@ -107,7 +183,7 @@ describe('Get api /jobs?offset=1', () => {
         assert.strictEqual(Array.isArray(jobs), true);
         assert.strictEqual(jobs[0].id, 'd35b2c89-5d60-4f26-b19a-6cfb2f1a0f57');
     });
-});
+}); */
 
 // ### Tests para POST /jobs
 
@@ -136,18 +212,8 @@ describe('Post a job api /jobs', () => {
             },
         };
 
-        const res = await fetch(`${baseURL}/jobs`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newJob),
-        });
+        const job = await handlePostRequestByPathAndCheckFormat('/jobs', newJob, 201);
 
-        assert.strictEqual(res.status, 201);
-        assert.strictEqual(
-            res.headers.get('content-type')?.includes('application/json'),
-            true,
-        );
-        const job = await res.json();
         assert.strictEqual(job.titulo, newJob.titulo);
         assert.strictEqual(job.empresa, newJob.empresa);
         assert.strictEqual(job.ubicacion, newJob.ubicacion);
@@ -162,13 +228,7 @@ describe('Post a job api /jobs', () => {
             ubicacion: 'Remote',
         };
 
-        const res = await fetch(`${baseURL}/jobs`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(incompleteJob),
-        });
-
-        assert.strictEqual(res.status, 400);
+        await handlePostRequestByPathAndCheckFormat('/jobs', incompleteJob, 400);
     });
 });
 
@@ -177,23 +237,14 @@ describe('Post a job api /jobs', () => {
 describe('Get api /jobs/:id', () => {
     it('debe responder con 200 y el job correspondiente al id', async () => {
         const jobId = 'd35b2c89-5d60-4f26-b19a-6cfb2f1a0f57';
-        const res = await fetch(`${baseURL}/jobs/${jobId}`);
+        const job = await handleGetRequestByPathAndCheckFormat(`/jobs/${jobId}`);
 
-        assert.strictEqual(res.status, 200);
-        assert.strictEqual(
-            res.headers.get('content-type')?.includes('application/json'),
-            true,
-        );
-
-        const job = await res.json();
         assert.strictEqual(job.id, jobId);
     });
 
     it('debe responder con 404 si el job no existe', async () => {
         const nonExistentId = '00000000-0000-0000-0000-000000000000';
-        const res = await fetch(`${baseURL}/jobs/${nonExistentId}`);
-
-        assert.strictEqual(res.status, 404);
+        await handleGetRequestByPathAndCheckFormat(`/jobs/${nonExistentId}`, 404);
     });
 });
 
@@ -207,13 +258,7 @@ describe('Put api /jobs/:id', () => {
             ubicacion: 'Remote Updated',
         };
 
-        const res = await fetch(`${baseURL}/jobs/${jobId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(incompleteJob),
-        });
-
-        assert.strictEqual(res.status, 400);
+        await handlePutRequestByPathAndCheckFormat(`/jobs/${jobId}`, incompleteJob, 400);
     });
 
     it('debe responder con 404 si el job no existe', async () => {
@@ -236,16 +281,10 @@ describe('Put api /jobs/:id', () => {
             },
         };
 
-        const res = await fetch(`${baseURL}/jobs/${nonExistentId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedJob),
-        });
-
-        assert.strictEqual(res.status, 404);
+        await handlePutRequestByPathAndCheckFormat(`/jobs/${nonExistentId}`, updatedJob, 404);
     });
 
-    it('debe responder con 200 y el job actualizado', async () => {
+    it('debe responder con 204 y el job actualizado', async () => {
         const jobId = 'd35b2c89-5d60-4f26-b19a-6cfb2f1a0f57';
         const updatedJob = {
             titulo: 'Backend Developer Updated',
@@ -265,15 +304,9 @@ describe('Put api /jobs/:id', () => {
             },
         };
 
-        const res = await fetch(`${baseURL}/jobs/${jobId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedJob),
-        });
-        assert.strictEqual(res.status, 204);
+        await handlePutRequestByPathAndCheckFormat(`/jobs/${jobId}`, updatedJob, 204);
 
-        const updatedJobRes = await fetch(`${res.url}`);
-        const job = await updatedJobRes.json();
+        const job = await handleGetRequestByPathAndCheckFormat(`/jobs/${jobId}`);
 
         assert.strictEqual(job.id, jobId);
         assert.strictEqual(job.titulo, updatedJob.titulo);
@@ -290,24 +323,16 @@ describe('Put api /jobs/:id', () => {
 describe('Patch api /jobs/:id', () => {
     it('debe responder con 204 y actualizar solo los campos enviados', async () => {
         const jobId = 'f62d8a34-923a-4ac2-9b0b-14e0ac2f5405';
-        const originalJobRes = await fetch(`${baseURL}/jobs/${jobId}`);
-        const originalJob = await originalJobRes.json();
-
+        const originalJob = await handleGetRequestByPathAndCheckFormat(`/jobs/${jobId}`);
+        
         const partialUpdate = {
             titulo: 'Frontend Developer Updated',
             ubicacion: 'Remote Updated',
         };
 
-        const res = await fetch(`${baseURL}/jobs/${jobId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(partialUpdate),
-        });
+        await handlePatchRequestByPathAndCheckFormat(`/jobs/${jobId}`, partialUpdate, 204);
 
-        assert.strictEqual(res.status, 204);
-
-        const updatedJobRes = await fetch(`${baseURL}/jobs/${jobId}`);
-        const job = await updatedJobRes.json();
+        const job = await handleGetRequestByPathAndCheckFormat(`/jobs/${jobId}`);
 
         assert.strictEqual(job.id, jobId);
         assert.strictEqual(job.titulo, partialUpdate.titulo);
@@ -324,13 +349,7 @@ describe('Patch api /jobs/:id', () => {
             titulo: 'Frontend Developer Updated',
         };
 
-        const res = await fetch(`${baseURL}/jobs/${nonExistentId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(partialUpdate),
-        });
-
-        assert.strictEqual(res.status, 404);
+        await handlePatchRequestByPathAndCheckFormat(`/jobs/${nonExistentId}`, partialUpdate, 404);
     });
 });
 
@@ -340,21 +359,14 @@ describe('Delete api /jobs/:id', () => {
     it('debe responder con 204 y eliminar el trabajo', async () => {
         const jobId = 'f62d8a34-923a-4ac2-9b0b-14e0ac2f5405';
 
-        const res = await fetch(`${baseURL}/jobs/${jobId}`, {
-            method: 'DELETE',
-        });
-        assert.strictEqual(res.status, 204);
-
-        const getRes = await fetch(`${baseURL}/jobs/${jobId}`);
-        assert.strictEqual(getRes.status, 404);
+        await handleGetRequestByPathAndCheckFormat(`/jobs/${jobId}`);
+        await handleDeleteRequestByPathAndCheckFormat(`/jobs/${jobId}`, 204);
+        await handleGetRequestByPathAndCheckFormat(`/jobs/${jobId}`, 404);
     });
 
     it('debe devolver 404 cuando el ID no existe', async () => {
         const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
-        const res = await fetch(`${baseURL}/jobs/${nonExistentId}`, {
-            method: 'DELETE',
-        });
-        assert.strictEqual(res.status, 404);
+        await handleDeleteRequestByPathAndCheckFormat(`/jobs/${nonExistentId}`, 404);
     });
 });
