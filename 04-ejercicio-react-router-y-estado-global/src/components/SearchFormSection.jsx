@@ -125,6 +125,7 @@ export function SearchFormSection({
                     <select
                         name={idTechnology}
                         id='filter-technology'
+                        aria-label='Tecnología'
                         defaultValue={technology ? technology : ''}
                     >
                         <option value=''>Tecnología</option>
@@ -147,6 +148,7 @@ export function SearchFormSection({
                     <select
                         name={idLocation}
                         id='filter-location'
+                        aria-label='Ubicación'
                         defaultValue={location ? location : ''}
                     >
                         <option value=''>Ubicación</option>
@@ -160,6 +162,7 @@ export function SearchFormSection({
                     <select
                         name={idExperienceLevel}
                         id='filter-experience-level'
+                        aria-label='Nivel de experiencia'
                         defaultValue={experienceLevel ? experienceLevel : ''}
                     >
                         <option value=''>Nivel de experiencia</option>

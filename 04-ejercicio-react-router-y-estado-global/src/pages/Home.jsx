@@ -45,7 +45,8 @@ export default function HomePage() {
                             <path d='M21 21l-6 -6' />
                         </svg>
 
-                        <input
+                         <input
+                            aria-label='Buscar empleos'
                             name='search'
                             required
                             type='search'
