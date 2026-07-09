@@ -25,13 +25,14 @@ Se puede! Todo lo que sea repetido se puede modularizar en funciones helper o fi
 En estos casos de test, lo que se me puede ocurrir es:
 
 - Crear una función `handleGetRequestByPathAndCheckFormat` que reciba el path y haga el fetch y las aserciones.
+
 ```js
 const handleGetRequestByPathAndCheckFormat = async (path = '/') => {
     const res = await fetch(`${baseURL}${path}`);
     assert.strictEqual(res.status, 200);
     assert.strictEqual(
-      res.headers.get('content-type')?.includes('application/json'),
-      true,
+        res.headers.get('content-type')?.includes('application/json'),
+        true,
     );
 
     const data = await res.json();
@@ -40,10 +41,12 @@ const handleGetRequestByPathAndCheckFormat = async (path = '/') => {
 ```
 
 Entonces, en vez de hacerlo siempre en cada test, podrías hacer:
+
 ```js
 describe('Get api /jobs', () => {
     it('debe responder con 200 y un array de trabajos', async () => {
-        const { data: jobs } = await handleGetRequestByPathAndCheckFormat('/jobs');
+        const { data: jobs } =
+            await handleGetRequestByPathAndCheckFormat('/jobs');
         assert.strictEqual(Array.isArray(jobs), true);
     });
 });
@@ -51,7 +54,9 @@ describe('Get api /jobs', () => {
 technologies.forEach((tech) => {
     describe(`Get api /jobs?technology=${tech}`, () => {
         it(`debe responder con 200 y trabajos que incluyan ${tech} en su data.technology`, async () => {
-            const { data: jobs } = await handleGetRequestByPathAndCheckFormat(`/jobs?technology=${tech}`);
+            const { data: jobs } = await handleGetRequestByPathAndCheckFormat(
+                `/jobs?technology=${tech}`,
+            );
 
             assert.strictEqual(Array.isArray(jobs), true);
 
@@ -69,6 +74,11 @@ Lo importante y lo que sí tiene que pasar en cada test, es que sea súper decla
 De hecho, este último ejemplo lo vamos a aplicar en la corrección para que veas cómo se puede hacer.
 
 PD: Faltó verificar alguno tests:
+
 - título < 3 → Status: 400
 - título > 100 → Status: 400
 - título no string → Status: 400
+
+Por favor verificar si los test agregados son correctos en por la posdata que me dijiste gracias.
+
+Agradezco la explicacion tomare nota e intentare pensar mejor las como modularizar de mejor manera el codigo cuando vea claramente algo muy repetido.
