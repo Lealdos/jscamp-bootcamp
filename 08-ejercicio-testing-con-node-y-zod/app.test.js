@@ -230,6 +230,29 @@ describe('Post a job api /jobs', () => {
 
         await handlePostRequestByPathAndCheckFormat('/jobs', incompleteJob, 400);
     });
+
+    const validJob = {
+        empresa: 'Tech Company',
+        ubicacion: 'Remote',
+    };
+
+    it('debe responder con 400 si el título tiene menos de 3 caracteres', async () => {
+        const jobWithShortTitle = { ...validJob, titulo: 'ab' };
+
+        await handlePostRequestByPathAndCheckFormat('/jobs', jobWithShortTitle, 400);
+    });
+
+    it('debe responder con 400 si el título tiene más de 100 caracteres', async () => {
+        const jobWithLongTitle = { ...validJob, titulo: 'a'.repeat(101) };
+
+        await handlePostRequestByPathAndCheckFormat('/jobs', jobWithLongTitle, 400);
+    });
+
+    it('debe responder con 400 si el título no es un string', async () => {
+        const jobWithInvalidTitle = { ...validJob, titulo: 12345 };
+
+        await handlePostRequestByPathAndCheckFormat('/jobs', jobWithInvalidTitle, 400);
+    });
 });
 
 // ### Tests para GET /jobs/:id
