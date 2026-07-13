@@ -82,3 +82,7 @@ PD: Faltó verificar alguno tests:
 Por favor verificar si los test agregados son correctos en por la posdata que me dijiste gracias.
 
 Agradezco la explicacion tomare nota e intentare pensar mejor las como modularizar de mejor manera el codigo cuando vea claramente algo muy repetido.
+
+**Respuesta:**
+
+Excelente! Quedaron perfectos :)
