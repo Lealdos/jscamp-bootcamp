@@ -105,7 +105,6 @@ export class JobModel {
         const where =
             conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-        // Solo concatenamos fragmentos fijos; todo valor va bindeado con ?.
         const rows = db
             .prepare(`${BASE_SELECT} ${where} ORDER BY j.rowid`)
             .all(...params) as JobRow[];
@@ -141,8 +140,6 @@ export class JobModel {
       VALUES (?, ?, ?, ?, ?, ?)
     `);
 
-        // Las tres tablas en una transacción: si falla un CHECK o una FK, el job
-        // padre también se revierte y no quedan filas huérfanas.
         const runCreate = db.transaction((job: Job) => {
             insertJob.run({
                 id: job.id,
@@ -158,8 +155,6 @@ export class JobModel {
                 insertTechnology.run(job.id, technology);
             }
 
-            // Si no viene content no insertamos la fila. Rellenar con strings vacíos
-            // para cumplir el NOT NULL fabricaría un content falso al leer.
             if (job.content) {
                 insertContent.run(
                     crypto.randomUUID(),
@@ -187,9 +182,6 @@ export class JobModel {
 
     // Actualizar un job
     static async update(id: string, input: UpdateJobDTO): Promise<Job | null> {
-        // Comprobamos la existencia con un SELECT y no con result.changes: un PATCH
-        // que solo trae data.technology no ejecuta ningún UPDATE jobs, así que
-        // changes valdría 0 para un job que sí existe.
         const exists = db.prepare('SELECT 1 FROM jobs WHERE id = ?').get(id);
         if (!exists) return null;
 
@@ -231,8 +223,6 @@ export class JobModel {
                 ).run(...params, id);
             }
 
-            // Borrar y reinsertar solo si la clave viene: undefined deja las
-            // tecnologías intactas, [] las vacía.
             if (input.data?.technology !== undefined) {
                 db.prepare('DELETE FROM job_technologies WHERE job_id = ?').run(
                     id,
@@ -263,8 +253,6 @@ export class JobModel {
 
         runUpdate();
 
-        // Releemos para devolver el estado ya committeado, incluidos los campos que
-        // el PATCH no tocó.
         return (await JobModel.getById(id)) ?? null;
     }
 }
