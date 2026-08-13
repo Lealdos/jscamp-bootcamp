@@ -3,12 +3,13 @@ import { db } from '../db/database';
 import type {
     Job,
     JobData,
+    JobContent,
     CreateJobDTO,
     UpdateJobDTO,
     JobFilters,
 } from '../types';
 
-const BASE_SELECT = `
+const JOB_DETAILS_SELECT_QUERY = `
   SELECT
     j.id,
     j.title,
@@ -49,54 +50,57 @@ interface JobRow {
     content_about: string | null;
 }
 
+const parseTechnologies = (json: string): string[] =>
+    JSON.parse(json) as string[];
+
+function toJobContent(row: JobRow): JobContent | undefined {
+    if (row.content_description === null) return undefined;
+
+    return {
+        description: row.content_description,
+        responsibilities: row.content_responsibilities ?? '',
+        requirements: row.content_requirements ?? '',
+        about: row.content_about ?? '',
+    };
+}
+
 function rowToJob(row: JobRow): Job {
-    const job: Job = {
-        id: row.id,
-        title: row.title,
-        company: row.company,
-        location: row.location,
-        description: row.description,
+    const { id, title, company, location, description } = row;
+    const content = toJobContent(row);
+
+    return {
+        id,
+        title,
+        company,
+        location,
+        description,
         data: {
-            technology: JSON.parse(row.technologies) as string[],
+            technology: parseTechnologies(row.technologies),
             modality: row.modality,
             level: row.level,
         },
+        ...(content && { content }),
     };
-
-    // Sin fila en job_content el LEFT JOIN deja los alias en NULL: el job no
-    // tiene content y la clave no debe aparecer.
-    if (row.content_description !== null) {
-        job.content = {
-            description: row.content_description,
-            responsibilities: row.content_responsibilities ?? '',
-            requirements: row.content_requirements ?? '',
-            about: row.content_about ?? '',
-        };
-    }
-
-    return job;
 }
 
 export class JobModel {
-    // Obtener todos los jobs con filtros opcionales
     static async getAll(filters?: JobFilters): Promise<Job[]> {
         const conditions: string[] = [];
         const params: unknown[] = [];
 
         if (filters?.modality) {
-            conditions.push('j.modality = ?');
+            conditions.push('j.modality = LOWER(?)');
             params.push(filters.modality);
         }
 
         if (filters?.level) {
-            conditions.push('j.level = ?');
+            conditions.push('j.level = LOWER(?)');
             params.push(filters.level);
         }
 
-        // EXISTS sobre la tabla hija: filtra sin recortar el array de tecnologías.
         if (filters?.tech) {
             conditions.push(`EXISTS (
-        SELECT 1 FROM job_technologies t
+        SELECT * FROM job_technologies t
         WHERE t.job_id = j.id AND LOWER(t.technology) = LOWER(?)
       )`);
             params.push(filters.tech);
@@ -106,22 +110,20 @@ export class JobModel {
             conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
         const rows = db
-            .prepare(`${BASE_SELECT} ${where} ORDER BY j.rowid`)
+            .prepare(`${JOB_DETAILS_SELECT_QUERY} ${where} ORDER BY j.rowid`)
             .all(...params) as JobRow[];
 
         return rows.map(rowToJob);
     }
 
-    // Obtener un job por ID
     static async getById(id: string): Promise<Job | undefined> {
-        const row = db.prepare(`${BASE_SELECT} WHERE j.id = ?`).get(id) as
-            | JobRow
-            | undefined;
+        const row = db
+            .prepare(`${JOB_DETAILS_SELECT_QUERY} WHERE j.id = ?`)
+            .get(id) as JobRow | undefined;
 
         return row ? rowToJob(row) : undefined;
     }
 
-    // Crear un nuevo job
     static async create(input: CreateJobDTO): Promise<Job> {
         const newJob: Job = {
             id: crypto.randomUUID(),
@@ -176,7 +178,6 @@ export class JobModel {
     static async delete(id: string): Promise<boolean> {
         const result = db.prepare('DELETE FROM jobs WHERE id = ?').run(id);
 
-        // changes cuenta solo las filas de jobs; las hijas caen por CASCADE.
         return result.changes > 0;
     }
 
@@ -188,7 +189,6 @@ export class JobModel {
         const fields: string[] = [];
         const params: unknown[] = [];
 
-        // Lista blanca de columnas: ninguna clave del body llega al SQL.
         if (input.title !== undefined) {
             fields.push('title = ?');
             params.push(input.title);
@@ -215,8 +215,6 @@ export class JobModel {
         }
 
         const runUpdate = db.transaction(() => {
-            // Un PATCH {} es válido, y `UPDATE jobs SET WHERE id = ?` sería un error
-            // de sintaxis.
             if (fields.length > 0) {
                 db.prepare(
                     `UPDATE jobs SET ${fields.join(', ')} WHERE id = ?`,
