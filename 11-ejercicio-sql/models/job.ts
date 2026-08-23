@@ -1,12 +1,12 @@
 import crypto from 'node:crypto';
 import { db } from '../db/database';
 import type {
-    Job,
-    JobData,
-    JobContent,
     CreateJobDTO,
-    UpdateJobDTO,
+    Job,
+    JobContent,
+    JobData,
     JobFilters,
+    UpdateJobDTO,
 } from '../types';
 
 const JOB_DETAILS_SELECT_QUERY = `
@@ -84,7 +84,10 @@ function rowToJob(row: JobRow): Job {
 }
 
 export class JobModel {
-    static async getAll(filters?: JobFilters): Promise<Job[]> {
+    static async getAll(
+        filters?: JobFilters,
+        pagination = { limit: 10, offset: 0 }, // Podemos usar variables globales
+    ): Promise<Job[]> {
         const conditions: string[] = [];
         const params: unknown[] = [];
 
@@ -109,9 +112,12 @@ export class JobModel {
         const where =
             conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
+        // ahora con los valores de offset y limit, podemos aplicar a la consulta este nuevo filtro.
         const rows = db
-            .prepare(`${JOB_DETAILS_SELECT_QUERY} ${where} ORDER BY j.rowid`)
-            .all(...params) as JobRow[];
+            .prepare(
+                `${JOB_DETAILS_SELECT_QUERY} ${where} ORDER BY j.rowid LIMIT ? OFFSET ?`,
+            )
+            .all(...params, pagination.limit, pagination.offset) as JobRow[];
 
         return rows.map(rowToJob);
     }
