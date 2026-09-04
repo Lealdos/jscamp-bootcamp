@@ -7,7 +7,11 @@ on:
     issue_comment:
         types: [created]
 
+    pull_request:
+        types: [opened, review_requested]
+
     pull_request_review_comment:
+        types: [created]
 
 jobs:
     inspect-event:
@@ -20,12 +24,13 @@ jobs:
                   EVENT_NAME: ${{ github.event_name }}
                   ISSUE_NUMBER: ${{ github.event.issue.number }}
                   COMMENT_BODY: ${{ github.event.comment.body }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
               run: |
                   echo "Evento: $EVENT_NAME"
                   echo "Numero de la issue: $ISSUE_NUMBER"
                   echo "Comentario: $COMMENT_BODY"
 
-            - name: Comentar en la issue recien abierta
+            - name: Comentar en la issue recién abierta
               if: ${{ github.event_name == 'issues' && github.event.action == 'opened' }}
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,3 +40,13 @@ jobs:
                   gh issue comment "$ISSUE_NUMBER" \
                     --repo "$GITHUB_REPOSITORY" \
                     --body "Gracias por tu aporte, @$AUTHOR! Hemos recibido tu issue y la revisaremos pronto."
+
+            - name: Comentar una pull request recién abierta
+              if: ${{ github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'review_requested') }}
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+              run: |
+                  gh pr comment "$PR_NUMBER" \
+                    --repo "$GITHUB_REPOSITORY" \
+                    --body "Gracias por tu pull request! Hemos recibido tu contribución y la revisaremos pronto."
