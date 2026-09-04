@@ -91,3 +91,23 @@ jobs:
 
             - name: Build del backend
               run: pnpm build:backend
+
+    frontend-test-matrix:
+        name: Frontend - Test (${{ matrix.os }} / Node ${{ matrix.node }})
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-24.04, macos-latest, windows-latest]
+                node: ['22', '24']
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+              with:
+                  node-version: ${{ matrix.node }}
+
+            - name: Tests del frontend
+              run: pnpm test:frontend
