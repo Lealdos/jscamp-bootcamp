@@ -1,0 +1,93 @@
+name: 05 - CI
+
+on:
+    push:
+        branches: [main]
+
+    pull_request:
+        branches: [main]
+
+defaults:
+    run:
+        working-directory: 12-ejercicio-cicd
+
+jobs:
+    frontend-lint:
+        name: Frontend - Lint
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+
+            - name: Lint del frontend
+              run: pnpm lint:frontend
+
+    frontend-test:
+        name: Frontend - Test
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+
+            - name: Tests del frontend
+              run: pnpm test:frontend
+
+    backend-lint:
+        name: Backend - Lint
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+
+            - name: Lint del backend
+              run: pnpm lint:backend
+
+    backend-test:
+        name: Backend - Test
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+
+            - name: Tests del backend
+              run: pnpm test:backend
+
+    frontend-build:
+        name: Frontend - Build
+        runs-on: ubuntu-24.04
+        needs: [frontend-lint, frontend-test]
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+
+            - name: Build del frontend
+              run: pnpm build:frontend
+
+    backend-build:
+        name: Backend - Build
+        runs-on: ubuntu-24.04
+        needs: [backend-lint, backend-test]
+        steps:
+            - name: Clonar el repositorio
+              uses: actions/checkout@v6
+
+            - name: Preparar Node y pnpm
+              uses: ./.github/actions/setup-pnpm-ci-cd
+
+            - name: Build del backend
+              run: pnpm build:backend
