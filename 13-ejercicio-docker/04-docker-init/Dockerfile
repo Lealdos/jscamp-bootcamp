@@ -32,7 +32,8 @@ USER node
 COPY . .
 
 # Expose the port that the application listens on.
-EXPOSE 3030
+# No es un error como tal, colocamos `3000` porque app escucha ese puerto
+EXPOSE 3000
 
 # Run the application.
 CMD npm start
