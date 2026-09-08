@@ -5,7 +5,6 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-# npm ci instala TODAS las dependencias, incluidas las devDependencies (esbuild)
 RUN npm ci
 
 COPY . .
